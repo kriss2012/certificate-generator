@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AISC Certificate Studio — RCPIMRD AI Student Chapters</title>
+    <meta name="description" content="Certificate generation tool by RCPIMRD AI Student Chapters (AISC). Generate batch certificates with custom templates.">
+    <link rel="icon" type="image/webp" href="club-logo.webp">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- PASSWORD GATE -->
+    <div id="passwordOverlay">
+        <div class="password-card">
+            <div class="logo-section">
+                <img src="club-logo.webp" alt="AISC Logo">
+                <h2>AISC Certificate Studio</h2>
+                <p>RCPIMRD AI Student Chapters</p>
+            </div>
+            <div class="password-field-wrapper">
+                <input type="password" id="passwordInput" placeholder="Enter access password" autocomplete="off">
+                <button type="button" class="toggle-password" id="togglePassword" title="Show password">
+                    <svg id="eyeIcon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg id="eyeOffIcon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+            </div>
+            <button class="unlock-btn" id="unlockBtn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                Unlock Studio
+            </button>
+            <p class="password-error-text" id="passwordError">Incorrect password. Please try again.</p>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header id="mainApp" style="display:none;">
+        <div class="header-brand">
+            <img src="club-logo.webp" alt="AISC Logo">
+            <div class="brand-text">
+                <h1>Certificate Studio</h1>
+                <span>AI Student Chapters — RCPIMRD</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="header-badge">v2.0 — AISC Tool</span>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container" id="mainContainer" style="display:none;">
+        
+        <!-- Controls Sidebar -->
+        <aside class="sidebar">
+            <!-- Section 1: Template -->
+            <div class="control-group">
+                <div class="section-header">
+                    <span class="section-number">1</span>
+                    <span class="section-title">Certificate Template</span>
+                </div>
+                <label class="file-upload-btn" id="uploadBgBtn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                    Click to Upload Base Image
+                    <input type="file" id="bgInput" accept="image/png, image/jpeg, image/jpg">
+                </label>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Section 2: Names -->
+            <div class="control-group">
+                <div class="section-header">
+                    <span class="section-number">2</span>
+                    <span class="section-title">Candidates List</span>
+                </div>
+                <p style="font-size:0.72rem; color: var(--text-dim); margin-top:-2px; margin-bottom:2px;">
+                    Paste names from Excel/PDF — one name per line.
+                </p>
+                <textarea id="namesInput" placeholder="John Doe&#10;Jane Smith&#10;Michael Johnson"></textarea>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Section 3: Typography -->
+            <div class="control-group">
+                <div class="section-header">
+                    <span class="section-number">3</span>
+                    <span class="section-title">Typography Settings</span>
+                </div>
+                <select id="fontFamily">
+                    <option value="Inter, sans-serif">Inter (Modern Sans)</option>
+                    <option value="Outfit, sans-serif">Outfit (Geometric Sans)</option>
+                    <option value="'Space Grotesk', sans-serif">Space Grotesk (Tech)</option>
+                    <option value="'Times New Roman', serif">Times New Roman (Classic)</option>
+                    <option value="Arial, sans-serif">Arial (Standard)</option>
+                    <option value="'Courier New', monospace">Courier New (Monospace)</option>
+                    <option value="'Georgia', serif">Georgia (Elegant Serif)</option>
+                    <option value="Custom">Upload Custom Font (.ttf/.otf)...</option>
+                </select>
+                <input type="file" id="fontInput" accept=".ttf, .otf, .woff, .woff2" style="display:none;">
+            </div>
+
+            <div class="row">
+                <div class="control-group">
+                    <label>Font Size</label>
+                    <input type="number" id="fontSize" value="64" min="10" max="400">
+                </div>
+                <div class="control-group">
+                    <label>Color</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="fontColor" value="#000000">
+                        <span id="hexValue" style="font-family:monospace; font-size:0.85rem; color:var(--text-muted);">#000000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="control-group">
+                    <label>Alignment</label>
+                    <select id="textAlign">
+                        <option value="center">Center</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Style</label>
+                    <select id="fontStyle">
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="italic">Italic</option>
+                        <option value="bold italic">Bold Italic</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="flex-grow: 1;"></div>
+            
+            <!-- Section 4: Export -->
+            <div class="control-group" style="gap: 10px; margin-top:12px;">
+                <div class="section-header">
+                    <span class="section-number">4</span>
+                    <span class="section-title">Generate Batch</span>
+                </div>
+                <button class="btn btn-primary" id="generatePdfBtn">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Download All as PDF
+                </button>
+                <button class="btn btn-secondary" id="generateZipBtn">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Download All as ZIP (Images)
+                </button>
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <main class="workspace">
+            <div id="loadingOverlay">
+                <div class="spinner"></div>
+                <h3 id="loadingText">Processing...</h3>
+            </div>
+            <div class="workspace-header">
+                <span class="workspace-title">
+                    <span class="dot"></span>
+                    Live Preview
+                </span>
+                <span id="templateSize" style="color:var(--text-muted); font-size: 0.8rem;">No template loaded</span>
+            </div>
+            <div class="canvas-container" id="canvasWrapper">
+                <canvas id="previewCanvas"></canvas>
+                <div class="instructions" id="canvasHint">Upload a certificate template to get started.</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer id="mainFooter" style="display:none;">
+        <span>&copy; 2026 RCPIMRD AI Student Chapters (AISC). All rights reserved.</span>
+        <span class="footer-brand">Made by AISC Team</span>
+    </footer>
+
+    <script>
+        // ===== PASSWORD GATE =====
+        const passwordOverlay = document.getElementById('passwordOverlay');
+        const passwordInput = document.getElementById('passwordInput');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const passwordError = document.getElementById('passwordError');
+        const CORRECT_PASSWORD = 'certificate@aisc';
+
+        function unlockApp() {
+            if (passwordInput.value === CORRECT_PASSWORD) {
+                passwordOverlay.style.opacity = '0';
+                passwordOverlay.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    passwordOverlay.style.display = 'none';
+                    document.getElementById('mainApp').style.display = 'flex';
+                    document.getElementById('mainContainer').style.display = 'flex';
+                    document.getElementById('mainFooter').style.display = 'flex';
+                }, 500);
+            } else {
+                passwordInput.classList.add('error');
+                passwordError.style.display = 'block';
+                setTimeout(() => {
+                    passwordInput.classList.remove('error');
+                }, 600);
+            }
+        }
+
+        unlockBtn.addEventListener('click', unlockApp);
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') unlockApp();
+            passwordError.style.display = 'none';
+        });
+
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOffIcon = document.getElementById('eyeOffIcon');
+        togglePassword.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            eyeIcon.style.display = isPassword ? 'none' : 'block';
+            eyeOffIcon.style.display = isPassword ? 'block' : 'none';
+            togglePassword.title = isPassword ? 'Hide password' : 'Show password';
+        });
+
+        // ===== CORE CERTIFICATE LOGIC (unchanged functionality) =====
+        const bgInput = document.getElementById('bgInput');
+        const namesInput = document.getElementById('namesInput');
+        const fontFamily = document.getElementById('fontFamily');
+        const fontInput = document.getElementById('fontInput');
+        const fontSize = document.getElementById('fontSize');
+        const fontColor = document.getElementById('fontColor');
+        const hexValue = document.getElementById('hexValue');
+        const textAlign = document.getElementById('textAlign');
+        const fontStyle = document.getElementById('fontStyle');
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasHint = document.getElementById('canvasHint');
+        const templateSizeText = document.getElementById('templateSize');
+        
+        const generatePdfBtn = document.getElementById('generatePdfBtn');
+        const generateZipBtn = document.getElementById('generateZipBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+
+        // State
+        let baseImage = null;
+        let textPos = { x: 0.5, y: 0.5 };
+        let isDragging = false;
+        let scaleRatio = 1;
+        let customFontName = null;
+
+        // Custom Font Upload Logic
+        fontFamily.addEventListener('change', (e) => {
+            if (e.target.value === 'Custom') {
+                fontInput.click();
+            } else {
+                customFontName = null;
+                render();
+            }
+        });
+
+        fontInput.addEventListener('change', async (e) => {
+            if (!e.target.files.length) {
+                fontFamily.selectedIndex = 0;
+                return;
+            }
+            const file = e.target.files[0];
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const fontName = 'UserCustomFont_' + Date.now();
+                const font = new FontFace(fontName, arrayBuffer);
+                await font.load();
+                document.fonts.add(font);
+                
+                customFontName = fontName;
+                fontFamily.options[fontFamily.options.length - 1].text = `Custom: ${file.name}`;
+                render();
+            } catch (err) {
+                alert("Failed to load custom font. Please ensure it's a valid .ttf or .otf file.");
+                fontFamily.selectedIndex = 0;
+                console.error(err);
+            }
+        });
+
+        // Initialize Settings Sync
+        const syncSettings = () => {
+            hexValue.textContent = fontColor.value.toUpperCase();
+            render();
+        };
+
+        [fontFamily, fontSize, fontColor, textAlign, fontStyle, namesInput].forEach(el => {
+            el.addEventListener('input', syncSettings);
+        });
+
+        // Handle Background Upload
+        bgInput.addEventListener('change', (e) => {
+            if (!e.target.files || !e.target.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    baseImage = img;
+                    templateSizeText.textContent = `${img.width} × ${img.height}px`;
+                    textPos = { x: 0.5, y: 0.5 }; 
+                    canvasHint.innerHTML = "Click and drag to position the name text.";
+                    resizeCanvas();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+
+        // Handle Display Resizing
+        function resizeCanvas() {
+            if (!baseImage) return;
+            const wrapper = document.getElementById('canvasWrapper');
+            const maxWidth = wrapper.clientWidth - 48;
+            const maxHeight = wrapper.clientHeight - 48;
+            const imgAspect = baseImage.width / baseImage.height;
+            const maxAspect = maxWidth / maxHeight;
+            let drawWidth, drawHeight;
+            if (imgAspect > maxAspect) {
+                drawWidth = maxWidth;
+                drawHeight = maxWidth / imgAspect;
+            } else {
+                drawHeight = maxHeight;
+                drawWidth = maxHeight * imgAspect;
+            }
+            canvas.style.width = `${drawWidth}px`;
+            canvas.style.height = `${drawHeight}px`;
+            canvas.width = baseImage.width;
+            canvas.height = baseImage.height;
+            scaleRatio = canvas.width / drawWidth; 
+            render();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Render Function
+        function render() {
+            if (!baseImage) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+
+            let sampleText = "Your Name Here";
+            const namesList = getNamesArray();
+            if (namesList.length > 0 && namesList[0].trim() !== "") {
+                sampleText = namesList[0];
+            }
+
+            const fName = customFontName ? `"${customFontName}"` : fontFamily.value;
+            const fStyle = fontStyle.value === 'normal' ? '' : fontStyle.value;
+            ctx.font = `${fStyle} ${fontSize.value}px ${fName}`.trim();
+            ctx.fillStyle = fontColor.value;
+            ctx.textAlign = textAlign.value;
+            ctx.textBaseline = "middle";
+
+            const x = textPos.x * canvas.width;
+            const y = textPos.y * canvas.height;
+            ctx.fillText(sampleText, x, y);
+
+            // Positioning guides
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "rgba(59, 130, 246, 0.35)";
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+            ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function getNamesArray() {
+            return namesInput.value.split('\n')
+                .map(n => n.trim())
+                .filter(n => n.length > 0);
+        }
+
+        // Dragging Logic
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: (evt.clientX - rect.left) * scaleX,
+                y: (evt.clientY - rect.top) * scaleY
+            };
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (!baseImage) return;
+            isDragging = true;
+            updatePos(e);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            updatePos(e);
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        function updatePos(e) {
+            if (!baseImage) return;
+            const pos = getMousePos(e);
+            textPos.x = pos.x / canvas.width;
+            textPos.y = pos.y / canvas.height;
+            textPos.x = Math.max(0, Math.min(1, textPos.x));
+            textPos.y = Math.max(0, Math.min(1, textPos.y));
+            render();
+        }
+
+        // --- EXPORT LOGIC ---
+        function drawOffscreen(name) {
+            const offCanvas = document.createElement('canvas');
+            offCanvas.width = baseImage.width;
+            offCanvas.height = baseImage.height;
+            const oCtx = offCanvas.getContext('2d');
+            oCtx.drawImage(baseImage, 0, 0);
+            const fName = customFontName ? `"${customFontName}"` : fontFamily.value;
+            const fStyle = fontStyle.value === 'normal' ? '' : fontStyle.value;
+            oCtx.font = `${fStyle} ${fontSize.value}px ${fName}`.trim();
+            oCtx.fillStyle = fontColor.value;
+            oCtx.textAlign = textAlign.value;
+            oCtx.textBaseline = "middle";
+            const x = textPos.x * offCanvas.width;
+            const y = textPos.y * offCanvas.height;
+            oCtx.fillText(name, x, y);
+            return offCanvas;
+        }
+
+        function getCanvasBlob(cvs) {
+            return new Promise(resolve => {
+                cvs.toBlob(resolve, 'image/jpeg', 0.95);
+            });
+        }
+
+        // Generate Multipage PDF
+        generatePdfBtn.addEventListener('click', async () => {
+            if (!baseImage) return alert('Please upload a template first.');
+            const names = getNamesArray();
+            if (names.length === 0) return alert('Please paste at least one name.');
+            loadingOverlay.classList.add('active');
+            try {
+                const orientation = baseImage.width > baseImage.height ? 'landscape' : 'portrait';
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: orientation,
+                    unit: "px",
+                    format: [baseImage.width, baseImage.height]
+                });
+                for (let i = 0; i < names.length; i++) {
+                    loadingText.textContent = `Generating PDF: ${i+1} / ${names.length}...`;
+                    const offCanvas = drawOffscreen(names[i]);
+                    const imgData = offCanvas.toDataURL('image/jpeg', 0.85);
+                    if (i > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, 0, baseImage.width, baseImage.height);
+                    await new Promise(r => setTimeout(r, 10)); 
+                }
+                loadingText.textContent = "Saving PDF...";
+                pdf.save("AISC_Certificates.pdf");
+            } catch(e) {
+                console.error(e);
+                alert("An error occurred during generation.");
+            } finally {
+                loadingOverlay.classList.remove('active');
+            }
+        });
+
+        // Generate ZIP File
+        generateZipBtn.addEventListener('click', async () => {
+            if (!baseImage) return alert('Please upload a template first.');
+            const names = getNamesArray();
+            if (names.length === 0) return alert('Please paste at least one name.');
+            loadingOverlay.classList.add('active');
+            try {
+                const zip = new JSZip();
+                const folder = zip.folder("AISC_Certificates");
+                for (let i = 0; i < names.length; i++) {
+                    loadingText.textContent = `Encoding Image: ${i+1} / ${names.length}...`;
+                    const offCanvas = drawOffscreen(names[i]);
+                    const blob = await getCanvasBlob(offCanvas);
+                    const safeName = names[i].replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                    folder.file(`certificate_${String(i+1).padStart(3, '0')}_${safeName}.jpg`, blob);
+                    await new Promise(r => setTimeout(r, 10)); 
+                }
+                loadingText.textContent = "Compressing ZIP file...";
+                const zipBlob = await zip.generateAsync({ type: "blob" });
+                saveAs(zipBlob, "AISC_Certificates.zip");
+            } catch(e) {
+                console.error(e);
+                alert("An error occurred during zip generation.");
+            } finally {
+                loadingOverlay.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
