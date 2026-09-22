@@ -5,7 +5,7 @@ const db = require('../server/config/database');
 const { generateDualVerificationBadgeSVG } = require('../server/services/qrBarcodeService');
 const { generateTamperHash } = require('../server/services/cryptoService');
 
-const BASE_URL = process.env.BASE_URL || 'http://10.1.65.29:3000';
+const BASE_URL = process.env.BASE_URL || 'https://certificate-generator-production-dfb2.up.railway.app';
 
 // Ensure required directories exist
 const outputDirs = [
