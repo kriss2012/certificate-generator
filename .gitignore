@@ -1,1 +1,30 @@
+# Dependencies
 node_modules/
+
+# Local Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# SQLite WAL & SHM temporary lock files
+data/*.db-shm
+data/*.db-wal
+
+# Generated certificates in production runtime
+public/stamped_certificates/generated/
+uploads/*
+!uploads/.gitkeep
+
+# Preview test scratch outputs
+data/preview/test_*
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
