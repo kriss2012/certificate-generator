@@ -154,10 +154,13 @@
             </button>
           </div>
 
-          <!-- Certificate Sheet Live Canvas -->
-          <div class="certificate-sheet-wrapper">
-            <div class="sheet-canvas-container">
-              <canvas id="verifyCanvas" width="1120" height="792"></canvas>
+          <!-- Certificate Sheet Live Canvas / Official Stamped Preview -->
+          <div class="certificate-sheet-wrapper" style="margin-bottom:2rem;">
+            <div class="sheet-canvas-container" style="display:flex;justify-content:center;align-items:center;background:transparent;padding:0;">
+              <!-- Authentic High-Resolution Stamped Certificate Preview Image -->
+              <img id="verifyCertPreviewImg" src="" alt="Official Stamped Certificate" style="display:none;width:100%;max-width:850px;height:auto;border-radius:10px;box-shadow:0 15px 45px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);margin:0 auto;" />
+              <!-- Authentic Dynamic Portrait Canvas (Rendered onto official template_graduating_base.png or template_hiring_base.png) -->
+              <canvas id="verifyCanvas" width="1240" height="1754" style="width:100%;max-width:850px;height:auto;border-radius:10px;box-shadow:0 15px 45px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);display:none;margin:0 auto;"></canvas>
             </div>
           </div>
 
