@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <path id="textCircleTop" d="M 30,100 A 70,70 0 0,1 170,100" fill="none" />
+    <path id="textCircleBottom" d="M 170,100 A 70,70 0 0,1 30,100" fill="none" />
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer Gold Rings -->
+  <circle cx="100" cy="100" r="94" fill="none" stroke="url(#goldGrad)" stroke-width="4" />
+  <circle cx="100" cy="100" r="88" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" stroke-dasharray="3,2" />
+  <circle cx="100" cy="100" r="66" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+  
+  <!-- Ribbon Ribbon / Inner Background -->
+  <circle cx="100" cy="100" r="64" fill="#0f172a" />
+  
+  <!-- Star Symbols & Laurels -->
+  <polygon points="100,45 103,54 112,54 105,60 107,69 100,64 93,69 95,60 88,54 97,54" fill="#fbbf24" />
+  <text x="100" y="112" font-family="'Times New Roman', serif" font-size="28" font-weight="bold" fill="#fbbf24" text-anchor="middle">AISC</text>
+  <text x="100" y="128" font-family="'Times New Roman', serif" font-size="9" letter-spacing="2" fill="#e2e8f0" text-anchor="middle">OFFICIAL SEAL</text>
+  <text x="100" y="142" font-family="'Times New Roman', serif" font-size="8" letter-spacing="1" fill="#94a3b8" text-anchor="middle">★ 2024 ★</text>
+  
+  <!-- Circular Embossed Text -->
+  <text font-family="'Times New Roman', serif" font-size="10.5" font-weight="bold" fill="#d97706" letter-spacing="1.5">
+    <textPath href="#textCircleTop" startOffset="50%" text-anchor="middle">
+      AI STUDENT CHAPTERS • AISC
+    </textPath>
+  </text>
+  <text font-family="'Times New Roman', serif" font-size="9.5" font-weight="bold" fill="#d97706" letter-spacing="1.2">
+    <textPath href="#textCircleBottom" startOffset="50%" text-anchor="middle">
+      EXCELLENCE &amp; LEADERSHIP
+    </textPath>
+  </text>
+</svg>

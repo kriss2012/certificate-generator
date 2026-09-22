@@ -1,0 +1,40 @@
+{
+  "name": "certificate-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node server/seed.js",
+    "test": "node tests/api.test.js && node tests/barcode_optical.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiragbehere/certificate-generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/chiragbehere/certificate-generator/issues"
+  },
+  "homepage": "https://github.com/chiragbehere/certificate-generator#readme",
+  "dependencies": {
+    "@prisma/client": "6.4.1",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.2",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "jsbarcode": "^3.12.3",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@zxing/library": "^0.23.0",
+    "prisma": "6.4.1"
+  }
+}

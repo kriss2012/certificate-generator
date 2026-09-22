@@ -1,0 +1,254 @@
+[
+  {
+    "id": "cert_grad_00001",
+    "cert_number": "AISC-2026-GRAD-00001",
+    "recipient_name": "Ms. Aastha Vilas Deshmukh",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\aastha-deshmukh-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\aastha-deshmukh-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "c855e5a7a2126ca382e54ef0f02d75ab2b1d8d67e5481f7c2059033b716f2e8a",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00002",
+    "cert_number": "AISC-2026-GRAD-00002",
+    "recipient_name": "Mr. Aniruddha Balaji Landge",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\aniruddha-landge-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\aniruddha-landge-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "7253efebf10ada91d76c8fa1dfe4c5d96f2661e256d0e4f9b0118a569ca6a4ec",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00003",
+    "cert_number": "AISC-2026-GRAD-00003",
+    "recipient_name": "Ms. Bhumika Nitin Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\bhumika-patil-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\bhumika-patil-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "e5dd1e9104617c187e0867ff75269b7cc1e5c9c0815791a43dba8f5f676e63fc",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00004",
+    "cert_number": "AISC-2026-GRAD-00004",
+    "recipient_name": "Ms. Bhumika Vilas Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\bhumika-vilas-patil-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\bhumika-vilas-patil-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "591873ad4fd0df0a6ffb58c8f175477a76518c0ae5f83643f4072231bfa8fa47",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00005",
+    "cert_number": "AISC-2026-GRAD-00005",
+    "recipient_name": "Mr. Chinmay Deepak More",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\chinmay-more-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\chinmay-more-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "7924cbc2b31474a601bc1d9c49e8201265373d5b82c4c6fc8624d982b71a913d",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00006",
+    "cert_number": "AISC-2026-GRAD-00006",
+    "recipient_name": "Mr. Kartik Sharad Valhe",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\kartik-valhe-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\kartik-valhe-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "f8b6bcfd8094bbc7d3da0176ea745d6bde67ce69fde9a1fcb1c9c16593be4139",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00007",
+    "cert_number": "AISC-2026-GRAD-00007",
+    "recipient_name": "Ms. Karuna Nitin Soni",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\karuna-soni-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\karuna-soni-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "d9b78b26a0413ff9d4ee45a6c57a0dc25774c93e435495cbe685748ddb855c7e",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00008",
+    "cert_number": "AISC-2026-GRAD-00008",
+    "recipient_name": "Ms. Ketana Ambalal Lohar",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\ketana-lohar-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\ketana-lohar-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "6b771642df1ad2c96a90ae78e566c07e9cd454c7b4141ceb0be1734033bc3286",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00009",
+    "cert_number": "AISC-2026-GRAD-00009",
+    "recipient_name": "Ms. Krushnali Vanusing   Jadhav",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\krushnali-jadhav-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\krushnali-jadhav-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "cddb57eb9570f41d819842efed284249b085a722148d9a18d890e74a28e172d1",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00010",
+    "cert_number": "AISC-2026-GRAD-00010",
+    "recipient_name": "Mr. Rohit Gautam Aagle",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\rohit-aagle-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\rohit-aagle-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "64e046aadb81a281d8a6fd4eb1816c077f01ed5edde6a57405206f1e451e9c9a",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00011",
+    "cert_number": "AISC-2026-GRAD-00011",
+    "recipient_name": "Ms. Sai Paresh Upakare",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\sai-upakare-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\sai-upakare-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "8abff674d447dafcaf8b3c45d7ed10bb2b29f58d1f7c80fd15096f9377988e70",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00012",
+    "cert_number": "AISC-2026-GRAD-00012",
+    "recipient_name": "Ms. Sejal Prashant Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\sejal-patil-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\sejal-patil-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "bc11fe0a0be4103346072ee60622da860204bfdb5933512eaec55068a4d1f585",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00013",
+    "cert_number": "AISC-2026-GRAD-00013",
+    "recipient_name": "Mr. Shreyash Sunil Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\shreyash-patil-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\shreyash-patil-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "1eaee45e4b6af7482163309e873ced9e21782dd8e50b84f4f22b7e6621eb2061",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00014",
+    "cert_number": "AISC-2026-GRAD-00014",
+    "recipient_name": "Mr . Tejas Dipak Panchbhai",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\tejas-panchbhai-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\tejas-panchbhai-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "c6beda32b51fbf5f81664204e4bca6cb7a43891f91c2245bd08ab8fd05650acb",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00015",
+    "cert_number": "AISC-2026-GRAD-00015",
+    "recipient_name": "Ms. Utkarsha Manohar Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\utkarsha-patil-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\utkarsha-patil-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "295cda62d1d893d080b5cb3b3b9c4d1a18d9dc521802ccfc26d36ea8874303d6",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_grad_00016",
+    "cert_number": "AISC-2026-GRAD-00016",
+    "recipient_name": "Mr. Vaibhav Jaywantrao Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Graduating Members 2026\\vaibhav-jaywantrao-appreciation-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Graduating Members 2026\\vaibhav-jaywantrao-appreciation-letter-aisc-2026.pdf",
+    "pdf_hash": "99907f467065b52db362740a6f5baed120c7c251646ee790a49c5af27079cd89",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00001",
+    "cert_number": "AISC-2026-HIRE-00001",
+    "recipient_name": "Mr. Aniruddha Balaji Landge",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\aniruddha-balaji-landge-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\aniruddha-balaji-landge-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "6bc81dce39eaca98eb6548469551d5082f7732b11d06def7d9e9ae23f859f21f",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00002",
+    "cert_number": "AISC-2026-HIRE-00002",
+    "recipient_name": "Mr. Purushottam Kishor Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\camera-team-head-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\camera-team-head-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "d46b68564eea3fc9c277e478562ee4ac880b4bf78387740813b76c77fdc3ce9e",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00003",
+    "cert_number": "AISC-2026-HIRE-00003",
+    "recipient_name": "Mr. Dhiraj Sandip Nikam",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\dhiraj-nikam-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\dhiraj-nikam-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "7fafaa1d1a68594017d75cf631cf9f503f5fbbb93ecb302bba84d15ee77e7124",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00004",
+    "cert_number": "AISC-2026-HIRE-00004",
+    "recipient_name": "Mr. Shrikant Dinesh Borase",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\doc&report-head-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\doc&report-head-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "dd19d37a6183ce4bd9c3c2f8b8cc2b79a974a4b32b8dc0955332742a92f8f08a",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00005",
+    "cert_number": "AISC-2026-HIRE-00005",
+    "recipient_name": "Ms. Ruchita Prabhakar Chaudhari",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\event-manager-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\event-manager-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "575278ef3b77454ab6d44e30eadba8da6a8364baba88d49c9ef797d2cf5c9b0b",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00006",
+    "cert_number": "AISC-2026-HIRE-00006",
+    "recipient_name": "Mr. Tejas Aaba Bagul",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\ops&log-head-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\ops&log-head-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "6261602f08f588bd779fcc79fa692d1a212805b415b2b5a7237bdeb4bd404a27",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00007",
+    "cert_number": "AISC-2026-HIRE-00007",
+    "recipient_name": "Mr. Chirag Rajesh Behere",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\president-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\president-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "4a0e1edb7bfb07ce64e77498f492b639429e9b15ea991ca251cc9fcb31d2cc2c",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00008",
+    "cert_number": "AISC-2026-HIRE-00008",
+    "recipient_name": "Mr. Moin Altaf Ansari",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\secretary-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\secretary-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "510290117a34e1d6431efec15ed98624719ce851a847af42fdd2a9c0dd9067c8",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00009",
+    "cert_number": "AISC-2026-HIRE-00009",
+    "recipient_name": "Ms. Tejaswini Pravin Pawar",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\social-media-head-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\social-media-head-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "37cc5ce2e7f7a091c7750921b730e36c750f5af361bb4fdd261823e44a914e4b",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00010",
+    "cert_number": "AISC-2026-HIRE-00010",
+    "recipient_name": "Mr. Krishna Chandrakant Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\technical-dept-head-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\technical-dept-head-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "ab4b7949693ffa7dc79f11922ceb0d3218ca51ab27830d18d0ee7f76126577b1",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00011",
+    "cert_number": "AISC-2026-HIRE-00011",
+    "recipient_name": "Ms. Harshada Manohar Bagul",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\treasurer-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\treasurer-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "49fc94cc93233b3e00483a11a9879f9e225d835387e4d98f2526e990a5a0b001",
+    "status": "stamped_successfully"
+  },
+  {
+    "id": "cert_hire_00012",
+    "cert_number": "AISC-2026-HIRE-00012",
+    "recipient_name": "Ms. Manasvi Kishor Patil",
+    "output_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\stamped_certificates\\Hiring AY 2026-27\\vice-president-membership-letter-aisc-2026.pdf",
+    "public_pdf": "C:\\Users\\IMRD\\Documents\\GitHub\\certificate-generator\\public\\stamped_certificates\\Hiring AY 2026-27\\vice-president-membership-letter-aisc-2026.pdf",
+    "pdf_hash": "b045d6a5ff7b93239269e0c7ea4156cc58ca96a6e8a018261d30a38b2b180bec",
+    "status": "stamped_successfully"
+  }
+]

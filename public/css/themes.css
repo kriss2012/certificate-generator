@@ -1,0 +1,92 @@
+/* ==========================================================
+   CERTIFICATE THEMES — 8 DISTINCT OFFICIAL DESIGNS
+   High-Resolution Vector Borders, Colors, Badges & Motifs
+   ========================================================== */
+
+/* 1. Classic Gold */
+.theme-classic_gold {
+  --cert-bg: #fffdf7;
+  --cert-border-outer: #b45309;
+  --cert-border-inner: #f59e0b;
+  --cert-title-color: #78350f;
+  --cert-name-color: #1e293b;
+  --cert-accent: #d97706;
+  --cert-font: 'Playfair Display', Georgia, serif;
+}
+
+/* 2. Royal Blue */
+.theme-royal_blue {
+  --cert-bg: #f8fafc;
+  --cert-border-outer: #1e3a8a;
+  --cert-border-inner: #3b82f6;
+  --cert-title-color: #1e40af;
+  --cert-name-color: #0f172a;
+  --cert-accent: #2563eb;
+  --cert-font: 'Outfit', sans-serif;
+}
+
+/* 3. Elegant Green */
+.theme-elegant_green {
+  --cert-bg: #f7fee7;
+  --cert-border-outer: #064e3b;
+  --cert-border-inner: #10b981;
+  --cert-title-color: #065f46;
+  --cert-name-color: #022c22;
+  --cert-accent: #059669;
+  --cert-font: 'Georgia', serif;
+}
+
+/* 4. Modern Minimal */
+.theme-modern_minimal {
+  --cert-bg: #ffffff;
+  --cert-border-outer: #0f172a;
+  --cert-border-inner: #94a3b8;
+  --cert-title-color: #0f172a;
+  --cert-name-color: #0284c7;
+  --cert-accent: #64748b;
+  --cert-font: 'Inter', sans-serif;
+}
+
+/* 5. Academic */
+.theme-academic {
+  --cert-bg: #fffbf5;
+  --cert-border-outer: #451a03;
+  --cert-border-inner: #92400e;
+  --cert-title-color: #451a03;
+  --cert-name-color: #1c1917;
+  --cert-accent: #b45309;
+  --cert-font: 'Times New Roman', serif;
+}
+
+/* 6. Sports Award */
+.theme-sports_award {
+  --cert-bg: #fef2f2;
+  --cert-border-outer: #991b1b;
+  --cert-border-inner: #dc2626;
+  --cert-title-color: #7f1d1d;
+  --cert-name-color: #0f172a;
+  --cert-accent: #ef4444;
+  --cert-font: 'Outfit', sans-serif;
+}
+
+/* 7. Corporate */
+.theme-corporate {
+  --cert-bg: #f8fafc;
+  --cert-border-outer: #0f172a;
+  --cert-border-inner: #334155;
+  --cert-title-color: #1e293b;
+  --cert-name-color: #2563eb;
+  --cert-accent: #475569;
+  --cert-font: 'Space Grotesk', sans-serif;
+}
+
+/* 8. Traditional Ceremonial */
+.theme-traditional_ceremonial {
+  --cert-bg: #fdf4ff;
+  --cert-border-outer: #581c87;
+  --cert-border-inner: #c084fc;
+  --cert-title-color: #701a75;
+  --cert-name-color: #3b0764;
+  --cert-accent: #a855f7;
+  --cert-font: 'Playfair Display', serif;
+}

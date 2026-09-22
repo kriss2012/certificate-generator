@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Official Certificate Studio & Verification System — AISC</title>
+  <meta name="description" content="Production-ready official certificate generation, verification, and tamper-detection system for clubs and organizations.">
+  <link rel="icon" type="image/webp" href="/assets/club-logo.webp">
+
+  <!-- Google Fonts: Inter, Outfit, Playfair Display, Space Grotesk, JetBrains Mono, Great Vibes for signatures -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/themes.css">
+
+  <!-- Libraries for Client-Side PDF, QR, Barcode, and ZIP handling -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <!-- Pre-render Theme Application (Prevents Theme Flash) -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('aisc_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+<body>
+  <!-- Ambient Orbital Halos matching imrdaisc.vercel.app -->
+  <div class="orbital-halo orbital-one"></div>
+  <div class="orbital-halo orbital-two"></div>
+
+  <!-- ==========================================================
+       TOP NAVIGATION BAR
+       ========================================================== -->
+  <header class="navbar" id="appNavbar">
+    <div class="brand-wrapper" id="navBrandLogo">
+      <img src="/assets/club-logo.webp" alt="Club Logo" class="brand-logo" id="headerClubLogo">
+      <div>
+        <h1 class="brand-title" id="headerClubName">AI Student Chapters <span>(AISC)</span></h1>
+        <p class="brand-subtitle" id="headerClubSub">Official Certificate &amp; Verification Portal</p>
+      </div>
+    </div>
+
+    <!-- Main Navigation Items (Authenticated View) -->
+    <ul class="nav-links" id="adminNavLinks" style="display:none;">
+      <li><button class="nav-item-btn active" data-tab="dashboard" data-i18n="nav_dashboard">Dashboard</button></li>
+      <li><button class="nav-item-btn" data-tab="creator" data-i18n="nav_create">Create Certificate</button></li>
+      <li><button class="nav-item-btn" data-tab="approvals" id="navApprovalsBtn" data-i18n="nav_approvals">Approvals <span id="navPendingBadge" style="display:none;background:#ef4444;color:#fff;font-size:0.65rem;padding:1px 5px;border-radius:10px;">0</span></button></li>
+      <li><button class="nav-item-btn" data-tab="library" data-i18n="nav_library">Library</button></li>
+      <li><button class="nav-item-btn" data-tab="bulk" data-i18n="nav_bulk">Bulk Import</button></li>
+      <li><button class="nav-item-btn" data-tab="settings" data-i18n="nav_settings">Club Settings</button></li>
+      <li><button class="nav-item-btn" data-tab="integration" data-i18n="nav_integration">Website Integration</button></li>
+      <li><button class="nav-item-btn" data-tab="logs" data-i18n="nav_logs">Audit Logs</button></li>
+    </ul>
+
+    <!-- Right Actions -->
+    <div class="nav-actions">
+      <!-- Dark / Light Mode Theme Toggle -->
+      <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark/Light Theme" title="Toggle Dark/Light Theme">
+        <span id="themeToggleIcon">🌙</span>
+      </button>
+
+      <!-- Language Selector -->
+      <select id="langSelector" class="form-control" style="padding:0.3rem 0.5rem;font-size:0.75rem;width:auto;">
+        <option value="en">English (EN)</option>
+        <option value="es">Español (ES)</option>
+        <option value="hi">हिंदी (HI)</option>
+        <option value="fr">Français (FR)</option>
+      </select>
+
+      <!-- Public Verification Search Button -->
+      <button class="btn btn-secondary btn-sm" id="navVerifyBtn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        Verify Cert
+      </button>
+
+      <!-- Authenticated User Status & Logout -->
+      <div id="authProfileGroup" style="display:none;align-items:center;gap:0.5rem;">
+        <span class="role-badge role-superadmin" id="currentUserRoleBadge">Superadmin</span>
+        <button class="btn btn-danger btn-sm" id="logoutBtn" title="Log Out">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+
+      <!-- Guest Login Button -->
+      <button class="btn btn-primary btn-sm" id="navLoginBtn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Admin Portal
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================
+       MAIN CONTAINER
+       ========================================================== -->
+  <main class="main-content">
+
+    <!-- ========================================================
+         VIEW 1: PUBLIC VERIFICATION VIEW
+         ======================================================== -->
+    <section id="viewVerification" class="tab-pane active">
+      <div class="verify-container">
+        
+        <!-- Search bar for instant verification -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+            <div style="flex:1;min-width:240px;position:relative;">
+              <input type="text" id="verifySearchInput" class="form-control" placeholder="Enter Certificate Number (e.g. AISC-2026-HIRE-00007 or AISC-2026-GRAD-00001)...">
+            </div>
+            <button class="btn btn-primary" id="executeVerifyBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              Verify Record
+            </button>
+            <button class="btn btn-secondary" id="loadSampleCertBtn" title="Load AISC Official Sample">
+              Load Official Sample (AISC-2026-HIRE-00007)
+            </button>
+          </div>
+        </div>
+
+        <!-- Verification Result Banner -->
+        <div id="verifyResultArea" style="display:none;">
+          <div class="verify-badge-banner verify-valid" id="verifyStatusBanner">
+            <h2 class="badge-status-title" id="verifyBadgeTitle">
+              <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              <span id="verifyStatusText">VERIFIED AND VALID</span>
+            </h2>
+            <p id="verifySubtext" style="color:rgba(255,255,255,0.9);max-width:650px;margin-bottom:0.5rem;">
+              This certificate was officially issued by <strong id="verifyClubName">AI Student Chapters</strong> and its authenticity has been cryptographically confirmed.
+            </p>
+            <div class="tamper-statement" id="verifyTamperBadge">
+              <svg width="14" height="14" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+              <span id="verifyTamperText">Certificate data matches the official cryptographic record (SHA-256 verified).</span>
+            </div>
+          </div>
+
+          <!-- Official Club Website Link Button (Crucial Section 2 Requirement) -->
+          <div style="display:flex;justify-content:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+            <a href="https://imrdaisc.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnVisitOfficialClub">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Visit Official Club Website
+            </a>
+            <button class="btn btn-primary" id="btnDownloadVerifiedPdf">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download PDF Certificate
+            </button>
+            <button class="btn btn-secondary" id="btnCopyVerifyLink">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              Copy Verification Link
+            </button>
+          </div>
+
+          <!-- Certificate Sheet Live Canvas -->
+          <div class="certificate-sheet-wrapper">
+            <div class="sheet-canvas-container">
+              <canvas id="verifyCanvas" width="1120" height="792"></canvas>
+            </div>
+          </div>
+
+          <!-- Recipient & Official Metadata Details Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Official Verification Record Details
+              </h3>
+              <span class="status-pill status-issued" id="detailsStatusPill">ISSUED</span>
+            </div>
+            <div class="form-grid">
+              <div>
+                <span class="form-label">Certificate Number</span>
+                <p style="font-family:var(--font-mono);font-weight:600;font-size:1.05rem;color:var(--accent-blue);" id="dtCertNumber">-</p>
+              </div>
+              <div>
+                <span class="form-label">Recipient Full Name</span>
+                <p style="font-weight:700;font-size:1.1rem;color:#fff;" id="dtRecipientName">-</p>
+              </div>
+              <div id="dtMemberIdGroup">
+                <span class="form-label">Member ID</span>
+                <p id="dtMemberId">-</p>
+              </div>
+              <div>
+                <span class="form-label">Certificate Category</span>
+                <p id="dtCategory">-</p>
+              </div>
+              <div id="dtPositionGroup">
+                <span class="form-label">Position / Post Held</span>
+                <p id="dtPosition">-</p>
+              </div>
+              <div>
+                <span class="form-label">Event / Initiative</span>
+                <p id="dtEvent">-</p>
+              </div>
+              <div>
+                <span class="form-label">Participation / Event Year</span>
+                <p id="dtYear">-</p>
+              </div>
+              <div>
+                <span class="form-label">Official Issue Date</span>
+                <p id="dtIssueDate">-</p>
+              </div>
+              <div class="col-span-2">
+                <span class="form-label">Achievement / Recognition Statement</span>
+                <p style="font-style:italic;color:var(--text-main);background:rgba(255,255,255,0.03);padding:0.75rem;border-radius:var(--radius-sm);" id="dtAchievement">-</p>
+              </div>
+              <div>
+                <span class="form-label">Authorizing Official</span>
+                <p id="dtApprover">-</p>
+              </div>
+              <div>
+                <span class="form-label">Verification Timestamp</span>
+                <p style="font-size:0.8rem;color:var(--text-muted);" id="dtVerifiedAt">-</p>
+              </div>
+            </div>
+
+            <!-- Social Sharing -->
+            <div class="share-bar">
+              <span style="font-size:0.8rem;color:var(--text-muted);">Share Credential:</span>
+              <a href="#" target="_blank" class="share-btn" id="shareWhatsApp">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24m4.52 11.5c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.44.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.59.21-1.09.15-1.19-.07-.1-.23-.16-.48-.28"/></svg>
+                WhatsApp
+              </a>
+              <a href="#" target="_blank" class="share-btn" id="shareLinkedIn">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.3a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28"/></svg>
+                LinkedIn
+              </a>
+              <a href="#" target="_blank" class="share-btn" id="shareTelegram">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l-.313 4.672c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.421z"/></svg>
+                Telegram
+              </a>
+            </div>
+          </div>
+
+          <!-- Official Dual Optical Verification Card (QR Code & Linear Barcode) -->
+          <div class="card" id="dtBarcodeCard" style="margin-top: 1.5rem;">
+            <div class="card-header">
+              <h3 class="card-title">
+                <svg width="20" height="20" fill="none" stroke="var(--color-acid)" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5v14M8 5v14M12 5v14M17 5v14M21 5v14"/></svg>
+                Official Optical Verification (Direct QR Code &amp; Code 128 Barcode)
+              </h3>
+              <span class="status-pill status-issued">LIVE VERIFIABLE</span>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;align-items:stretch;margin-top:0.5rem;">
+              
+              <!-- Direct Smartphone Scan QR Code -->
+              <div style="text-align:center;padding:1.25rem;background:#ffffff;border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,0.12);display:flex;flex-direction:column;justify-content:space-between;">
+                <div>
+                  <div style="font-size:0.8rem;font-weight:700;color:#0f172a;letter-spacing:0.8px;margin-bottom:0.6rem;">SMARTPHONE CAMERA SCAN</div>
+                  <div id="verifyQrContainer" style="display:flex;justify-content:center;align-items:center;padding:0.5rem;">
+                    <img id="verifyQrImage" src="" alt="Verification QR Code" style="max-width:160px;height:auto;display:block;margin:0 auto;border-radius:4px;" />
+                  </div>
+                </div>
+                <div style="margin-top:0.75rem;">
+                  <a href="#" target="_blank" id="verifyDirectLink" class="btn btn-primary btn-sm" style="font-size:0.75rem;padding:0.4rem 0.8rem;display:inline-flex;align-items:center;gap:0.4rem;text-decoration:none;">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Open Live Verification Page
+                  </a>
+                </div>
+              </div>
+
+              <!-- Optical 1D Barcode & Machine Reader -->
+              <div style="display:flex;flex-direction:column;justify-content:space-between;background:#ffffff;padding:1.25rem;border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,0.12);text-align:center;">
+                <div>
+                  <div style="font-size:0.8rem;font-weight:700;color:#0f172a;letter-spacing:0.8px;margin-bottom:0.6rem;">MACHINE-READABLE BARCODE (CODE 128)</div>
+                  <div class="barcode-box" style="background:#ffffff;padding:0.5rem;margin:0;min-height:90px;display:flex;align-items:center;justify-content:center;">
+                    <svg id="verifyBarcodeSvg" style="max-width:100%;height:auto;display:block;margin:0 auto;"></svg>
+                  </div>
+                </div>
+                <p style="font-family:var(--font-mono);font-size:0.75rem;color:#64748b;margin-top:0.75rem;text-align:center;line-height:1.4;">
+                  Scan with any phone camera or optical barcode scanner to open certificate details.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 2: ADMIN DASHBOARD
+         ======================================================== -->
+    <section id="viewDashboard" class="tab-pane">
+      <div class="grid-stats">
+        <div class="stat-card">
+          <div class="stat-glow" style="background:#3b82f6;"></div>
+          <div class="stat-title">Total Certificates Issued</div>
+          <div class="stat-value" id="statTotalIssued">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-glow" style="background:#10b981;"></div>
+          <div class="stat-title">Issued This Year</div>
+          <div class="stat-value" id="statIssuedYear">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-glow" style="background:#f59e0b;"></div>
+          <div class="stat-title">Awaiting Approval</div>
+          <div class="stat-value" id="statPendingApproval">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-glow" style="background:#ef4444;"></div>
+          <div class="stat-title">Revoked Certificates</div>
+          <div class="stat-value" id="statRevoked">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-glow" style="background:#8b5cf6;"></div>
+          <div class="stat-title">Total Verifications</div>
+          <div class="stat-value" id="statVerifications">0</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+        <!-- Recent Certificates Table -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Recent Certificates</h3>
+            <button class="btn btn-secondary btn-sm" onclick="switchTab('library')">View All</button>
+          </div>
+          <div class="table-responsive">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Number</th>
+                  <th>Recipient</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Issue Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardRecentCertsTable">
+                <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">Loading certificates...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Quick Activity / Tamper Feed -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Recent Verification Activity</h3>
+          </div>
+          <div id="dashboardRecentVerifFeed" style="display:flex;flex-direction:column;gap:0.75rem;font-size:0.85rem;">
+            <p style="color:var(--text-muted);">Loading activity...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 3: CERTIFICATE CREATOR STUDIO
+         ======================================================== -->
+    <section id="viewCreator" class="tab-pane">
+      <div style="display:grid;grid-template-columns:420px 1fr;gap:1.5rem;align-items:start;">
+        
+        <!-- Left: Form Controls Sidebar -->
+        <div class="card" style="max-height:85vh;overflow-y:auto;">
+          <div class="card-header">
+            <h3 class="card-title">Certificate Details</h3>
+            <span class="role-badge role-cert_admin">Studio</span>
+          </div>
+
+          <!-- Category / Type -->
+          <div class="form-group">
+            <label class="form-label">Certificate Type</label>
+            <select id="certTypeSelect" class="form-control"></select>
+          </div>
+
+          <!-- Recipient Name -->
+          <div class="form-group">
+            <label class="form-label">Recipient Full Name *</label>
+            <input type="text" id="certRecipientName" class="form-control" placeholder="e.g. Alex Morgan" value="Alex Morgan">
+          </div>
+
+          <!-- Preferred Display Name -->
+          <div class="form-group">
+            <label class="form-label">Preferred Display Name <small>(Optional)</small></label>
+            <input type="text" id="certDisplayName" class="form-control" placeholder="e.g. Alex Morgan">
+          </div>
+
+          <!-- Member ID & Status -->
+          <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <div class="form-group">
+              <label class="form-label">Member ID</label>
+              <input type="text" id="certMemberId" class="form-control" placeholder="MEM-2024-001" value="MEM-2024-001">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Membership Status</label>
+              <select id="certMemberStatus" class="form-control">
+                <option value="Official member">Official member</option>
+                <option value="Executive Officer">Executive Officer</option>
+                <option value="Alumni member">Alumni member</option>
+                <option value="Honorary member">Honorary member</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Position & Department -->
+          <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <div class="form-group">
+              <label class="form-label">Position / Post Held</label>
+              <input type="text" id="certPosition" class="form-control" placeholder="e.g. President" value="President">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department / Committee</label>
+              <input type="text" id="certDepartment" class="form-control" placeholder="Executive Committee" value="Executive Committee">
+            </div>
+          </div>
+
+          <!-- Event / Program & Year -->
+          <div class="form-grid" style="grid-template-columns:2fr 1fr;gap:0.5rem;">
+            <div class="form-group">
+              <label class="form-label">Event / Program Name</label>
+              <input type="text" id="certEventName" class="form-control" placeholder="Annual Tech & AI Symposium" value="Annual Tech & AI Symposium">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Event Year</label>
+              <input type="number" id="certEventYear" class="form-control" value="2024">
+            </div>
+          </div>
+
+          <!-- Award Title / Rank -->
+          <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <div class="form-group">
+              <label class="form-label">Award Title / Rank</label>
+              <input type="text" id="certAwardTitle" class="form-control" placeholder="e.g. 1st Place / Honor" value="President Honor">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Issue Date *</label>
+              <input type="date" id="certIssueDate" class="form-control">
+            </div>
+          </div>
+
+          <!-- Auto-Wording Achievement Statement -->
+          <div class="form-group">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.2rem;">
+              <label class="form-label" style="margin:0;">Achievement / Wording *</label>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnAutoGenerateWording" style="padding:2px 6px;font-size:0.7rem;">Auto-Generate</button>
+            </div>
+            <textarea id="certAchievement" class="form-control" rows="3">Served as President, remained an official member, and participated in the club’s 2024 activities.</textarea>
+          </div>
+
+          <!-- Design Theme & Style -->
+          <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <div class="form-group">
+              <label class="form-label">Design Theme</label>
+              <select id="certThemeSelect" class="form-control">
+                <option value="classic_gold">1. Classic Gold</option>
+                <option value="royal_blue">2. Royal Blue</option>
+                <option value="elegant_green">3. Elegant Green</option>
+                <option value="modern_minimal">4. Modern Minimal</option>
+                <option value="academic">5. Academic</option>
+                <option value="sports_award">6. Sports Award</option>
+                <option value="corporate">7. Corporate</option>
+                <option value="traditional_ceremonial">8. Traditional Ceremonial</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Font Family</label>
+              <select id="certFontFamily" class="form-control">
+                <option value="'Playfair Display', serif">Playfair Display (Serif)</option>
+                <option value="'Outfit', sans-serif">Outfit (Sans-Serif)</option>
+                <option value="'Inter', sans-serif">Inter (Clean)</option>
+                <option value="'Times New Roman', serif">Times New Roman</option>
+                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Signatories -->
+          <div class="form-group">
+            <label class="form-label">Authorizing Official (Approver)</label>
+            <input type="text" id="certApproverName" class="form-control" placeholder="e.g. Dr. Vaishali Patil" value="Dr. Vaishali Patil">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Approver Title / Designation</label>
+            <input type="text" id="certApproverTitle" class="form-control" placeholder="President & Authorized Authority" value="President & Approving Authority">
+          </div>
+
+          <!-- Privacy Settings -->
+          <div class="form-group">
+            <label class="form-label">Public Verification Privacy</label>
+            <div style="display:flex;gap:1rem;font-size:0.8rem;">
+              <label><input type="checkbox" id="privacyShowMemberId" checked> Show Member ID</label>
+              <label><input type="checkbox" id="privacyShowPosition" checked> Show Position</label>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+            <button class="btn btn-primary" id="btnSubmitCertificate" style="flex:1;">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Issue / Save
+            </button>
+            <button class="btn btn-secondary" id="btnDownloadEditorPdf">
+              Download PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Live Canvas Workspace -->
+        <div class="card" style="padding:1rem;">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="status-pill status-issued" style="margin-right:6px;">LIVE PREVIEW</span>
+              Interactive Certificate Studio (A4 Landscape)
+            </h3>
+            <span style="font-size:0.75rem;color:var(--text-muted);" id="canvasSizeIndicator">3508 × 2480px (300 DPI High-Res)</span>
+          </div>
+          <div class="sheet-canvas-container" style="background:#0b1120;border-radius:var(--radius-sm);overflow:auto;">
+            <canvas id="certCanvas" width="1120" height="792"></canvas>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text-dim);margin-top:0.5rem;text-align:center;">
+            Includes verified scannable QR code, Code 128 barcode, official club seal, and tamper-resistant cryptographic signatures.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 4: APPROVAL WORKFLOW QUEUE
+         ======================================================== -->
+    <section id="viewApprovals" class="tab-pane">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Pending Certificate Approvals</h3>
+          <span class="role-badge role-approver">Approver Queue</span>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Cert Number</th>
+                <th>Recipient Name</th>
+                <th>Type</th>
+                <th>Event / Year</th>
+                <th>Requested Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="approvalsTableBody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No pending certificates awaiting approval.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 5: CERTIFICATE LIBRARY & DATABASE
+         ======================================================== -->
+    <section id="viewLibrary" class="tab-pane">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Official Certificate Database</h3>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="btn btn-secondary btn-sm" id="btnExportCsv">Export CSV</button>
+            <button class="btn btn-secondary btn-sm" id="btnExportJson">Export JSON</button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;">
+          <input type="text" id="libSearchInput" class="form-control" style="max-width:300px;" placeholder="Search recipient, number, event...">
+          <select id="libStatusFilter" class="form-control" style="max-width:180px;">
+            <option value="">All Statuses</option>
+            <option value="issued">Issued &amp; Valid</option>
+            <option value="pending_approval">Pending Approval</option>
+            <option value="revoked">Revoked</option>
+            <option value="superseded">Superseded</option>
+          </select>
+          <select id="libTypeFilter" class="form-control" style="max-width:200px;">
+            <option value="">All Categories</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="btnFilterLibrary">Filter</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Cert Number</th>
+                <th>Recipient</th>
+                <th>Category</th>
+                <th>Event</th>
+                <th>Issue Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="libraryTableBody">
+              <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Loading library...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 6: BULK CERTIFICATE GENERATOR
+         ======================================================== -->
+    <section id="viewBulk" class="tab-pane">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Bulk Certificate Generator</h3>
+          <span class="role-badge role-cert_admin">Batch Processor</span>
+        </div>
+
+        <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1rem;">
+          Upload a CSV file or paste recipient details. The system generates unique certificate numbers, individual QR verification codes, and high-resolution PDFs packaged as a ZIP download.
+        </p>
+
+        <!-- Template Download & File Picker -->
+        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;">
+          <label class="btn btn-secondary">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Choose CSV File
+            <input type="file" id="bulkCsvFileInput" accept=".csv" style="display:none;">
+          </label>
+          <button class="btn btn-secondary btn-sm" id="btnDownloadCsvSample">Download CSV Sample Template</button>
+        </div>
+
+        <!-- Paste Text Area -->
+        <div class="form-group">
+          <label class="form-label">Or Paste CSV Data (Format: Full Name, Member ID, Certificate Type, Event Name, Event Year, Award Title, Email)</label>
+          <textarea id="bulkCsvTextInput" class="form-control" rows="6" placeholder="Alex Morgan,MEM-001,winner,AI Hackathon,2024,1st Place,alex@example.com&#10;Sarah Connor,MEM-002,participation,AI Hackathon,2024,Participant,sarah@example.com"></textarea>
+        </div>
+
+        <div style="display:flex;gap:1rem;align-items:center;margin-top:1rem;">
+          <button class="btn btn-primary" id="btnProcessBulk">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Generate Batch Certificates
+          </button>
+          <button class="btn btn-gold" id="btnDownloadBatchZip" style="display:none;">
+            Download Batch as ZIP
+          </button>
+        </div>
+
+        <!-- Bulk Results Table -->
+        <div id="bulkResultsArea" style="margin-top:1.5rem;display:none;">
+          <h4 style="font-size:0.95rem;margin-bottom:0.5rem;color:var(--accent-green);">Processed Batch Output:</h4>
+          <div class="table-responsive">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Cert Number</th>
+                  <th>Recipient Name</th>
+                  <th>Status</th>
+                  <th>Verification Link</th>
+                </tr>
+              </thead>
+              <tbody id="bulkResultsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 7: OFFICIAL CLUB SETTINGS
+         ======================================================== -->
+    <section id="viewSettings" class="tab-pane">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Official Club Information &amp; Settings</h3>
+          <span class="role-badge role-superadmin">Administrative Control</span>
+        </div>
+
+        <form id="clubSettingsForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Official Club Name *</label>
+              <input type="text" id="setClubName" class="form-control" value="AI Student Chapters">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Club Abbreviation / Prefix *</label>
+              <input type="text" id="setClubAbbr" class="form-control" value="AISC">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official Club Website URL (Placeholder: OFFICIAL_CLUB_WEBSITE_URL) *</label>
+              <input type="url" id="setOfficialUrl" class="form-control" value="https://imrdaisc.vercel.app/">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official Homepage URL</label>
+              <input type="url" id="setHomepageUrl" class="form-control" value="https://imrdaisc.vercel.app/">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official Contact Email</label>
+              <input type="email" id="setContactEmail" class="form-control" value="aisc@rcpimrd.ac.in">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official Contact Phone</label>
+              <input type="text" id="setContactPhone" class="form-control" value="+91 2563 272602">
+            </div>
+            <div class="form-group col-span-2">
+              <label class="form-label">Official Club Address</label>
+              <input type="text" id="setClubAddress" class="form-control" value="RCPET's Institute of Management Research & Development, Shirpur, Maharashtra, India">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Registration / Affiliation Number</label>
+              <input type="text" id="setRegNumber" class="form-control" value="AISC-ORG-2024-9982">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Club President's Name</label>
+              <input type="text" id="setPresidentName" class="form-control" value="Dr. Vaishali Patil">
+            </div>
+            <div class="form-group">
+              <label class="form-label">General Secretary's Name</label>
+              <input type="text" id="setSecretaryName" class="form-control" value="Prof. Manoj Behere">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Authorizing Officer Designation</label>
+              <input type="text" id="setAuthOfficer" class="form-control" value="Director of Academic & Student Affairs">
+            </div>
+          </div>
+
+          <div style="margin-top:1.5rem;">
+            <button type="submit" class="btn btn-primary">Save Official Settings</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 8: WEBSITE INTEGRATION & API HUB
+         ======================================================== -->
+    <section id="viewIntegration" class="tab-pane">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Website Integration &amp; Developer API Hub</h3>
+          <span class="role-badge role-cert_admin">Integration Pathways</span>
+        </div>
+
+        <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.5rem;">
+          Connect the Certificate Generation &amp; Verification System to your existing club website using 4 secure methods:
+        </p>
+
+        <!-- Tabs inside integration: Iframe, Embed Widget, REST API, Webhooks -->
+        <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;">
+          <button class="btn btn-secondary btn-sm active" id="btnTabIframe">Method 1: Embed Widget &amp; Iframe</button>
+          <button class="btn btn-secondary btn-sm" id="btnTabDirect">Method 2: Direct Link</button>
+          <button class="btn btn-secondary btn-sm" id="btnTabApi">Method 3: REST API &amp; Keys</button>
+          <button class="btn btn-secondary btn-sm" id="btnTabWebhooks">Method 4: Webhooks</button>
+        </div>
+
+        <!-- Integration Content Panels -->
+        <div id="panelIframe">
+          <h4 style="font-size:0.95rem;margin-bottom:0.5rem;">Embed Verification Portal in your Existing Website</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem;">
+            Copy and paste this HTML snippet into any page on your club website to embed the verification widget:
+          </p>
+          <pre style="background:#0b1120;padding:1rem;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:0.8rem;color:#38bdf8;overflow-x:auto;">&lt;!-- Embed Certificate Verification Widget --&gt;
+&lt;iframe 
+  src="http://localhost:3000/embed/verify" 
+  width="100%" 
+  height="650px" 
+  frameborder="0" 
+  style="border-radius:12px; border:1px solid rgba(255,255,255,0.1); box-shadow:0 10px 30px rgba(0,0,0,0.3);"&gt;
+&lt;/iframe&gt;</pre>
+        </div>
+
+        <div id="panelDirect" style="display:none;">
+          <h4 style="font-size:0.95rem;margin-bottom:0.5rem;">Direct Verification Button for Club Website Navbar</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem;">
+            Add this button to your existing website header or footer to route members directly to verification:
+          </p>
+          <pre style="background:#0b1120;padding:1rem;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:0.8rem;color:#34d399;overflow-x:auto;">&lt;a href="http://localhost:3000/verify" target="_blank" class="club-verify-btn"&gt;
+  Verify Certificate Authenticity
+&lt;/a&gt;</pre>
+        </div>
+
+        <div id="panelApi" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+            <h4 style="font-size:0.95rem;margin:0;">REST API Keys</h4>
+            <button class="btn btn-primary btn-sm" id="btnCreateApiKey">+ Generate New API Key</button>
+          </div>
+          <div class="table-responsive" style="margin-bottom:1.5rem;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Key Prefix</th>
+                  <th>Name</th>
+                  <th>Permissions</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="apiKeysTableBody">
+                <tr><td colspan="5" style="color:var(--text-muted);">Loading API keys...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4 style="font-size:0.95rem;margin-bottom:0.5rem;">API Endpoints Reference</h4>
+          <pre style="background:#0b1120;padding:1rem;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:0.8rem;color:#cbd5e1;overflow-x:auto;">
+GET  /api/v1/verify/:identifier       - Public verification &amp; tamper check
+GET  /api/v1/public/club             - Public official club details
+POST /api/v1/certificates           - Create new certificate (Bearer/API-Key)
+GET  /api/v1/certificates           - Search &amp; list certificates
+POST /api/v1/certificates/bulk      - Bulk recipient certificate generation
+POST /api/v1/certificates/:id/revoke- Revoke issued certificate</pre>
+        </div>
+
+        <div id="panelWebhooks" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+            <h4 style="font-size:0.95rem;margin:0;">Configured Webhooks</h4>
+            <button class="btn btn-primary btn-sm" id="btnAddWebhookBtn">+ Register Webhook</button>
+          </div>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">
+            Receive real-time HMAC-SHA256 signed POST notifications when certificates are issued, approved, revoked, or verified.
+          </p>
+          <div class="table-responsive">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Endpoint URL</th>
+                  <th>Event Subscriptions</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="webhooksTableBody">
+                <tr><td colspan="4" style="color:var(--text-muted);">No webhooks registered.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 9: AUDIT & VERIFICATION LOGS
+         ======================================================== -->
+    <section id="viewLogs" class="tab-pane">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">System Audit &amp; Verification Trail</h3>
+          <span class="role-badge role-superadmin">Tamper &amp; Access Logs</span>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Action / Query</th>
+                <th>User / IP Address</th>
+                <th>Entity</th>
+                <th>Details / Status</th>
+              </tr>
+            </thead>
+            <tbody id="auditLogsTableBody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Loading audit logs...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================
+       LOGIN / AUTHENTICATION MODAL
+       ========================================================== -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <h3 class="card-title" style="margin:0;">Administrator Portal Login</h3>
+        <button class="btn btn-secondary btn-sm" id="closeLoginModalBtn">✕</button>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.25rem;">
+        Sign in with your authorized club staff or approver account to access management tools.
+      </p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="admin@club.org" value="admin@club.org" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" value="admin123" required>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.03);padding:0.75rem;border-radius:var(--radius-sm);font-size:0.75rem;color:var(--text-dim);margin-bottom:1rem;">
+          <strong>Pre-seeded Test Accounts:</strong><br>
+          • Superadmin: <code>admin@club.org</code> / <code>admin123</code><br>
+          • Approver: <code>approver@club.org</code> / <code>approver123</code><br>
+          • Cert Admin: <code>manager@club.org</code> / <code>manager123</code><br>
+          • Verifier: <code>verifier@club.org</code> / <code>verifier123</code>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

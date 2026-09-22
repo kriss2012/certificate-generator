@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../data/certificates.db"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  fullName     String    @map("full_name")
+  role         String    // superadmin, cert_admin, approver, verifier, readonly
+  isActive     Int       @default(1) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  lastLogin    DateTime? @map("last_login")
+
+  @@map("users")
+}
+
+model ClubSetting {
+  key         String   @id
+  value       String
+  description String?
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by")
+
+  @@map("club_settings")
+}
+
+model CertificateType {
+  id              String        @id @default(uuid())
+  slug            String        @unique
+  name            String
+  description     String?
+  wordingTemplate String        @map("wording_template")
+  isSystem        Int           @default(1) @map("is_system")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  certificates    Certificate[]
+
+  @@map("certificate_types")
+}
+
+model CertificateTemplate {
+  id           String        @id @default(uuid())
+  name         String
+  theme        String        @default("classic_gold")
+  orientation  String        @default("landscape")
+  pageSize     String        @default("A4") @map("page_size")
+  fontFamily   String        @default("Outfit, sans-serif") @map("font_family")
+  fontSize     Int           @default(52) @map("font_size")
+  primaryColor String?       @default("#d8ff3e") @map("primary_color")
+  accentColor  String?       @default("#b500ff") @map("accent_color")
+  borderStyle  String?       @default("neon_cyber") @map("border_style")
+  showSeal     Int           @default(1) @map("show_seal")
+  showBarcode  Int           @default(1) @map("show_barcode")
+  showQr       Int           @default(1) @map("show_qr")
+  layoutConfig String?       @map("layout_config")
+  isDefault    Int           @default(0) @map("is_default")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  certificates Certificate[]
+
+  @@map("certificate_templates")
+}
+
+model Recipient {
+  id               String        @id @default(uuid())
+  fullName         String        @map("full_name")
+  displayName      String?       @map("display_name")
+  email            String?
+  memberId         String?       @map("member_id")
+  membershipStatus String?       @default("Official member") @map("membership_status")
+  positionHeld     String?       @map("position_held")
+  department       String?
+  photoUrl         String?       @map("photo_url")
+  notes            String?
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @default(now()) @updatedAt @map("updated_at")
+  certificates     Certificate[]
+
+  @@map("recipients")
+}
+
+model Certificate {
+  id                        String              @id @default(uuid())
+  publicId                  String              @unique @map("public_id")
+  certNumber                String              @unique @map("cert_number")
+  recipientId               String?             @map("recipient_id")
+  recipientName             String              @map("recipient_name")
+  recipientDisplayName      String?             @map("recipient_display_name")
+  recipientEmail            String?             @map("recipient_email")
+  recipientPhoto            String?             @map("recipient_photo")
+  memberId                  String?             @map("member_id")
+  membershipStatus          String?             @map("membership_status")
+  positionHeld              String?             @map("position_held")
+  department                String?
+  typeId                    String              @map("type_id")
+  typeName                  String              @map("type_name")
+  awardTitle                String?             @map("award_title")
+  achievementText           String              @map("achievement_text")
+  eventName                 String?             @map("event_name")
+  eventYear                 Int?                @map("event_year")
+  eventDate                 String?             @map("event_date")
+  location                  String?
+  membershipStart           String?             @map("membership_start")
+  membershipEnd             String?             @map("membership_end")
+  positionStart             String?             @map("position_start")
+  positionEnd               String?             @map("position_end")
+  resultRank                String?             @map("result_rank")
+  score                     String?
+  category                  String?
+  issueDate                 String              @map("issue_date")
+  issuedBy                  String?             @map("issued_by")
+  approverName              String?             @map("approver_name")
+  approverTitle             String?             @map("approver_title")
+  approverSignature         String?             @map("approver_signature")
+  secondaryApproverName     String?             @map("secondary_approver_name")
+  secondaryApproverTitle    String?             @map("secondary_approver_title")
+  secondaryApproverSignature String?            @map("secondary_approver_signature")
+  templateId                String?             @map("template_id")
+  theme                     String?             @default("classic_gold")
+  notes                     String?
+  status                    String              @default("draft")
+  privacySettings           String?             @map("privacy_settings")
+  qrData                    String              @map("qr_data")
+  barcodeData               String              @map("barcode_data")
+  verificationUrl           String              @map("verification_url")
+  tamperHash                String              @map("tamper_hash")
+  pdfHash                   String?             @map("pdf_hash")
+  version                   Int                 @default(1)
+  supersededBy              String?             @map("superseded_by")
+  supersedeReason           String?             @map("supersede_reason")
+  createdBy                 String?             @map("created_by")
+  approvedBy                String?             @map("approved_by")
+  approvedAt                DateTime?           @map("approved_at")
+  revokedBy                 String?             @map("revoked_by")
+  revokedAt                 DateTime?           @map("revoked_at")
+  revokeReason              String?             @map("revoke_reason")
+  createdAt                 DateTime            @default(now()) @map("created_at")
+  updatedAt                 DateTime            @default(now()) @updatedAt @map("updated_at")
+
+  recipient   Recipient?           @relation(fields: [recipientId], references: [id], onDelete: SetNull)
+  type        CertificateType      @relation(fields: [typeId], references: [id])
+  template    CertificateTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  versions    CertificateVersion[]
+  approvals   Approval[]
+  verifications VerificationLog[]
+
+  @@index([certNumber])
+  @@index([publicId])
+  @@index([status])
+  @@index([recipientName])
+  @@index([typeId])
+  @@map("certificates")
+}
+
+model CertificateVersion {
+  id            String      @id @default(uuid())
+  certificateId String      @map("certificate_id")
+  versionNumber Int         @map("version_number")
+  certNumber    String      @map("cert_number")
+  snapshotJson  String      @map("snapshot_json")
+  reason        String?
+  createdBy     String?     @map("created_by")
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  certificate   Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+
+  @@map("certificate_versions")
+}
+
+model Approval {
+  id            String      @id @default(uuid())
+  certificateId String      @map("certificate_id")
+  requestedBy   String      @map("requested_by")
+  approverId    String?     @map("approver_id")
+  approverName  String?     @map("approver_name")
+  status        String      @default("pending")
+  comments      String?
+  signatureData String?     @map("signature_data")
+  decisionAt    DateTime?   @map("decision_at")
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  certificate   Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+
+  @@map("approvals")
+}
+
+model VerificationLog {
+  id             String       @id @default(uuid())
+  certificateId  String?      @map("certificate_id")
+  queryTerm      String       @map("query_term")
+  ipAddress      String?      @map("ip_address")
+  userAgent      String?      @map("user_agent")
+  statusReturned String       @map("status_returned")
+  tamperDetected Int          @default(0) @map("tamper_detected")
+  verifiedAt     DateTime     @default(now()) @map("verified_at")
+
+  certificate    Certificate? @relation(fields: [certificateId], references: [id], onDelete: SetNull)
+
+  @@index([certificateId])
+  @@map("verification_logs")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?  @map("user_id")
+  userEmail  String?  @map("user_email")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  details    String?
+  ipAddress  String?  @map("ip_address")
+  timestamp  DateTime @default(now())
+
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  keyPrefix   String    @map("key_prefix")
+  keyHash     String    @map("key_hash")
+  name        String
+  permissions String?   @default("read,verify")
+  createdBy   String?   @map("created_by")
+  isActive    Int       @default(1) @map("is_active")
+  lastUsedAt  DateTime? @map("last_used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("api_keys")
+}
+
+model Webhook {
+  id              String    @id @default(uuid())
+  url             String
+  eventTypes      String    @map("event_types")
+  secret          String
+  isActive        Int       @default(1) @map("is_active")
+  failureCount    Int       @default(0) @map("failure_count")
+  lastTriggeredAt DateTime? @map("last_triggered_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@map("webhooks")
+}
