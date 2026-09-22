@@ -887,23 +887,15 @@ POST /api/v1/certificates/:id/revoke- Revoke issued certificate</pre>
 
       <form id="loginForm">
         <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" id="loginEmail" class="form-control" placeholder="admin@club.org" value="admin@club.org" required>
+          <label class="form-label" for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="name@domain.org" autocomplete="username" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" value="admin123" required>
+          <label class="form-label" for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
         </div>
 
-        <div style="background:rgba(255,255,255,0.03);padding:0.75rem;border-radius:var(--radius-sm);font-size:0.75rem;color:var(--text-dim);margin-bottom:1rem;">
-          <strong>Pre-seeded Test Accounts:</strong><br>
-          • Superadmin: <code>admin@club.org</code> / <code>admin123</code><br>
-          • Approver: <code>approver@club.org</code> / <code>approver123</code><br>
-          • Cert Admin: <code>manager@club.org</code> / <code>manager123</code><br>
-          • Verifier: <code>verifier@club.org</code> / <code>verifier123</code>
-        </div>
-
-        <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;">Sign In</button>
       </form>
     </div>
   </div>

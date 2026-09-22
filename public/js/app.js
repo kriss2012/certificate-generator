@@ -32,7 +32,9 @@ const state = {
   currentCert: null,
   assets: {
     logoImg: null,
-    sealImg: null
+    sealImg: null,
+    gradBaseImg: null,
+    hireBaseImg: null
   }
 };
 
@@ -68,6 +70,18 @@ function preloadAssets() {
   seal.onload = () => {
     state.assets.sealImg = seal;
     renderStudioCertificate();
+  };
+
+  const gradBase = new Image();
+  gradBase.src = '/assets/template_graduating_base.png';
+  gradBase.onload = () => {
+    state.assets.gradBaseImg = gradBase;
+  };
+
+  const hireBase = new Image();
+  hireBase.src = '/assets/template_hiring_base.png';
+  hireBase.onload = () => {
+    state.assets.hireBaseImg = hireBase;
   };
 }
 
@@ -213,11 +227,32 @@ window.executeVerification = async function(identifier) {
       }
     }
 
-    // Render Canvas safely with dedicated error capture
-    try {
-      renderCertificateToCanvas(document.getElementById('verifyCanvas'), data.certificate, data.club);
-    } catch (canvasErr) {
-      console.warn('Canvas rendering notice:', canvasErr);
+    // Display Official Stamped Certificate Showcase:
+    // If an authentic stamped preview image exists (PNG), display it directly.
+    // If not, render dynamically onto the authentic portrait template canvas.
+    const previewImg = document.getElementById('verifyCertPreviewImg');
+    const verifyCvs = document.getElementById('verifyCanvas');
+    let previewUrl = (data.certificate.preview_url || '').replace(/\\/g, '/');
+
+    if (previewUrl && previewImg) {
+      previewImg.src = previewUrl;
+      previewImg.style.display = 'block';
+      if (verifyCvs) verifyCvs.style.display = 'none';
+
+      previewImg.onerror = () => {
+        // Fallback to dynamic portrait canvas if image fails to load
+        previewImg.style.display = 'none';
+        if (verifyCvs) {
+          verifyCvs.style.display = 'block';
+          renderCertificateToCanvas(verifyCvs, data.certificate, data.club);
+        }
+      };
+    } else {
+      if (previewImg) previewImg.style.display = 'none';
+      if (verifyCvs) {
+        verifyCvs.style.display = 'block';
+        renderCertificateToCanvas(verifyCvs, data.certificate, data.club);
+      }
     }
 
     // Setup Sharing
@@ -298,6 +333,91 @@ function setupShareLinks(certNumber, recipient) {
 function renderCertificateToCanvas(canvas, cert, club) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+
+  // Check if this is an official AISC certificate or portrait verification canvas
+  const isPortraitAISC = canvas.id === 'verifyCanvas' || 
+                         (cert && cert.cert_number && cert.cert_number.startsWith('AISC-2026')) ||
+                         (canvas.width === 1240 && canvas.height === 1754);
+
+  if (isPortraitAISC) {
+    if (canvas.width !== 1240 || canvas.height !== 1754) {
+      canvas.width = 1240;
+      canvas.height = 1754;
+    }
+    const w = 1240;
+    const h = 1754;
+    ctx.clearRect(0, 0, w, h);
+
+    const isHiring = (cert && cert.cert_number && cert.cert_number.includes('HIRE')) ||
+                     (cert && cert.type_id && cert.type_id.includes('membership'));
+    const baseSrc = isHiring ? '/assets/template_hiring_base.png' : '/assets/template_graduating_base.png';
+
+    const drawContent = (img) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+
+      const recName = (cert.recipient_display_name || cert.recipient_name || 'STUDENT NAME').trim();
+      const position = cert.position_held || 'Executive Member';
+      const dept = cert.department || (isHiring ? 'BCA - I' : 'MCA (Int.) - III');
+      const tenure = cert.event_year || '12 September 2025 – 19 September 2026';
+      const certNum = cert.cert_number || 'AISC-2026-GRAD-00001';
+
+      if (isHiring) {
+        // Hiring Letter Coordinates
+        ctx.font = "bold 32px 'Montserrat', sans-serif";
+        ctx.fillStyle = "#c19647";
+        ctx.textAlign = "left";
+        ctx.fillText(recName, w * 0.10, h * 0.285);
+
+        ctx.font = "bold 18px 'Inter', sans-serif";
+        ctx.fillStyle = "#104670";
+        ctx.fillText(dept, w * 0.145, h * 0.327);
+        ctx.fillText(position, w * 0.207, h * 0.344);
+      } else {
+        // Graduating Appreciation Letter Coordinates
+        ctx.font = "bold 32px 'Montserrat', sans-serif";
+        ctx.fillStyle = "#c19647";
+        ctx.textAlign = "left";
+        ctx.fillText(recName, w * 0.10, h * 0.359);
+
+        ctx.font = "bold 18px 'Inter', sans-serif";
+        ctx.fillStyle = "#104670";
+        ctx.fillText(`Class: ${dept}`, w * 0.10, h * 0.395);
+        ctx.fillText(`Position Held: ${position}`, w * 0.10, h * 0.412);
+        ctx.fillText(`Tenure of Position: ${tenure}`, w * 0.10, h * 0.429);
+      }
+
+      // Draw Linear Barcode (Code 128) in top-right official stamp area
+      const barX = w * 0.674;
+      const barY = h * 0.255;
+      const barW = w * 0.226;
+      const barH = 50;
+
+      drawBarcodeOnCanvas(ctx, certNum, barX + barW / 2, barY, barH);
+
+      // Cert Number
+      ctx.textAlign = 'center';
+      ctx.font = "bold 12px 'JetBrains Mono', monospace";
+      ctx.fillStyle = '#0f172a';
+      ctx.fillText(certNum, barX + barW / 2, barY + barH + 18);
+    };
+
+    const cachedImg = isHiring ? state.assets.hireBaseImg : state.assets.gradBaseImg;
+    if (cachedImg && cachedImg.complete && cachedImg.naturalWidth > 0) {
+      drawContent(cachedImg);
+    } else {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        if (isHiring) state.assets.hireBaseImg = img;
+        else state.assets.gradBaseImg = img;
+        drawContent(img);
+      };
+      img.src = baseSrc;
+    }
+    return;
+  }
+
   const w = Number(canvas.width) || 1120;
   const h = Number(canvas.height) || 792;
 
@@ -589,7 +709,7 @@ window.autoGenerateWording = function() {
 
 window.submitCertificate = async function() {
   if (!state.token) {
-    showToast('Please sign in to the Admin Portal to issue certificates (e.g. admin@club.org / admin123)', 'warning');
+    showToast('Please sign in to the Admin Portal to issue certificates', 'warning');
     window.openLoginModal();
     return;
   }
@@ -659,7 +779,7 @@ window.downloadCanvasAsPdf = function(canvas, filename) {
 
 window.processBulkImport = async function() {
   if (!state.token) {
-    showToast('Please sign in to the Admin Portal to generate bulk certificates (e.g. admin@club.org / admin123)', 'warning');
+    showToast('Please sign in to the Admin Portal to generate bulk certificates', 'warning');
     window.openLoginModal();
     return;
   }
@@ -1627,7 +1747,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (addWebhook) {
     addWebhook.onclick = async () => {
       if (!state.token) {
-        showToast('Please sign in to the Admin Portal to register webhooks (e.g. admin@club.org / admin123)', 'warning');
+        showToast('Please sign in to the Admin Portal to register webhooks', 'warning');
         window.openLoginModal();
         return;
       }
