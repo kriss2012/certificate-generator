@@ -6,6 +6,7 @@ const { verifyCertificateTamper } = require('../services/cryptoService');
 const { dispatchWebhook } = require('../services/webhookService');
 
 let stampedCertMap = null;
+let stampedPreviewMap = null;
 function getStampedPdfUrl(certNumber) {
   try {
     if (!stampedCertMap) {
@@ -13,10 +14,12 @@ function getStampedPdfUrl(certNumber) {
       if (fs.existsSync(resultsPath)) {
         const list = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
         stampedCertMap = {};
+        stampedPreviewMap = {};
         list.forEach(item => {
           if (item.public_pdf && item.public_pdf.includes('public')) {
             const rel = item.public_pdf.split('public')[1].replace(/\\/g, '/');
             stampedCertMap[item.cert_number] = rel;
+            stampedPreviewMap[item.cert_number] = rel.replace('.pdf', '.png');
           }
         });
       }
@@ -25,6 +28,11 @@ function getStampedPdfUrl(certNumber) {
   } catch (e) {
     return null;
   }
+}
+
+function getStampedPreviewUrl(certNumber) {
+  getStampedPdfUrl(certNumber);
+  return (stampedPreviewMap && stampedPreviewMap[certNumber]) || null;
 }
 
 exports.verifyCertificate = (req, res) => {
@@ -200,7 +208,8 @@ exports.verifyCertificate = (req, res) => {
         qr_data: cert.qr_data,
         barcode_data: cert.barcode_data,
         verification_url: cert.verification_url,
-        pdf_url: getStampedPdfUrl(cert.cert_number)
+        pdf_url: cert.pdf_url || getStampedPdfUrl(cert.cert_number),
+        preview_url: cert.preview_url || getStampedPreviewUrl(cert.cert_number) || (cert.pdf_url ? cert.pdf_url.replace('.pdf', '.png') : null)
       }
     });
   } catch (err) {
