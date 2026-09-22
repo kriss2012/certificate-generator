@@ -11,8 +11,12 @@ if (!fs.existsSync(dbDir)) {
 
 const db = new Database(dbPath);
 
-// Enable WAL mode for high performance and concurrency
-db.pragma('journal_mode = WAL');
+// Enable WAL mode for high performance and concurrency (with fallback for network/volume storage)
+try {
+  db.pragma('journal_mode = WAL');
+} catch (e) {
+  console.warn('SQLite WAL mode initialization notice:', e.message);
+}
 db.pragma('foreign_keys = ON');
 
 function initSchema() {

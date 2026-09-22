@@ -1,5 +1,5 @@
-# Use official Node.js 20 Debian Bookworm slim image
-FROM node:20-bookworm-slim
+# Use official Node.js 22 Debian Bookworm slim image (required for better-sqlite3 v13+)
+FROM node:22-bookworm-slim
 
 # Install system dependencies: Python 3, pip, venv, and build tools for native addons (better-sqlite3)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     python3-venv \
     build-essential \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PyMuPDF (fitz) required for official certificate PDF manipulation
@@ -18,8 +19,9 @@ WORKDIR /app
 # Copy package manifests first for efficient Docker layer caching
 COPY package*.json ./
 
-# Install production dependencies
+# Install production dependencies and rebuild better-sqlite3 against container Node 22 ABI
 RUN npm ci --omit=dev || npm install --omit=dev
+RUN npm rebuild better-sqlite3
 
 # Copy application source code
 COPY . .
