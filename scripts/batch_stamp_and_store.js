@@ -216,6 +216,9 @@ async function main() {
       item.class_info
     );
 
+    const relPdf = `/stamped_certificates/Hiring AY 2026-27/${item.filename}`;
+    const relPng = `/stamped_certificates/Hiring AY 2026-27/${item.filename.replace('.pdf', '.png')}`;
+
     // Upsert Certificate
     db.prepare(`
       INSERT INTO certificates (
@@ -227,6 +230,7 @@ async function main() {
         secondary_approver_name, secondary_approver_title, secondary_approver_signature,
         template_id, theme, notes, status, privacy_settings,
         qr_data, barcode_data, verification_url, tamper_hash,
+        pdf_url, preview_url,
         version, created_by, approved_by, approved_at, created_at, updated_at
       ) VALUES (
         ?, ?, ?, ?, ?, ?,
@@ -237,6 +241,7 @@ async function main() {
         ?, ?, ?,
         ?, ?, ?, 'issued', ?,
         ?, ?, ?, ?,
+        ?, ?,
         1, 'admin', 'Dr. Manoj N. Behere', '2026-09-19 10:00:00', datetime('now'), datetime('now')
       )
       ON CONFLICT(cert_number) DO UPDATE SET
@@ -256,6 +261,8 @@ async function main() {
         barcode_data = excluded.barcode_data,
         verification_url = excluded.verification_url,
         tamper_hash = excluded.tamper_hash,
+        pdf_url = excluded.pdf_url,
+        preview_url = excluded.preview_url,
         status = 'issued',
         updated_at = datetime('now')
     `).run(
@@ -268,7 +275,8 @@ async function main() {
       'Mr. Vishal A. Pawar', 'Assistant Professor, AI Student Chapter Coordinator', 'Mr. Vishal A. Pawar [Official Signature]',
       'tmpl_classic_gold', 'classic_gold', `Tenure: ${item.tenure} | Subject: ${item.subject || ''} | Class: ${item.class_info}`,
       JSON.stringify({ show_member_id: true, show_position: true, show_score: false }),
-      qrDataUrl, badgeResult.svg, verificationUrl, tamperHash
+      qrDataUrl, badgeResult.svg, verificationUrl, tamperHash,
+      relPdf, relPng
     );
 
     stampingJobs.push({
