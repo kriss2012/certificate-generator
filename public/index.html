@@ -108,15 +108,15 @@
         
         <!-- Search bar for instant verification -->
         <div class="card" style="margin-bottom:1.5rem;">
-          <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
-            <div style="flex:1;min-width:240px;position:relative;">
+          <div class="verify-search-row">
+            <div class="verify-search-input-wrap">
               <input type="text" id="verifySearchInput" class="form-control" placeholder="Enter Certificate Number (e.g. AISC-2026-HIRE-00007 or AISC-2026-GRAD-00001)...">
             </div>
             <button class="btn btn-primary" id="executeVerifyBtn">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
               Verify Record
             </button>
-            <button class="btn btn-secondary" id="loadSampleCertBtn" title="Load AISC Official Sample">
+            <button class="btn btn-secondary btn-sample-load" id="loadSampleCertBtn" title="Load AISC Official Sample">
               Load Official Sample (AISC-2026-HIRE-00007)
             </button>
           </div>
@@ -139,7 +139,7 @@
           </div>
 
           <!-- Official Club Website Link Button (Crucial Section 2 Requirement) -->
-          <div style="display:flex;justify-content:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+          <div class="verify-action-buttons">
             <a href="https://imrdaisc.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnVisitOfficialClub">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
               Visit Official Club Website
@@ -248,7 +248,7 @@
               <span class="status-pill status-issued">LIVE VERIFIABLE</span>
             </div>
             
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;align-items:stretch;margin-top:0.5rem;">
+            <div class="optical-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;align-items:stretch;margin-top:0.5rem;">
               
               <!-- Direct Smartphone Scan QR Code -->
               <div style="text-align:center;padding:1.25rem;background:#ffffff;border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,0.12);display:flex;flex-direction:column;justify-content:space-between;">
