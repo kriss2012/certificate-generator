@@ -45,6 +45,13 @@ def main():
         # 4. Save to both storage locations
         doc.save(output_pdf)
         doc.save(public_pdf)
+
+        # Generate and save high-resolution preview PNGs
+        output_png = output_pdf.replace(".pdf", ".png")
+        public_png = public_pdf.replace(".pdf", ".png")
+        page.get_pixmap(dpi=150).save(output_png)
+        page.get_pixmap(dpi=150).save(public_png)
+
         doc.close()
 
         # 5. Compute SHA-256 of generated PDF
