@@ -5,6 +5,7 @@ const { generateTamperHash } = require('../services/cryptoService');
 const { generateQRCode, generateBarcodeSVG } = require('../services/qrBarcodeService');
 const { dispatchWebhook } = require('../services/webhookService');
 const { logAudit } = require('../middleware/auth');
+const { generateOfficialCertificateDocument } = require('../services/officialTemplateService');
 
 function getBaseUrl(req) {
   return process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
@@ -67,6 +68,30 @@ exports.createCertificate = async (req, res) => {
 
     const initialStatus = data.status || (req.user && ['superadmin', 'approver'].includes(req.user.role) ? 'issued' : 'pending_approval');
 
+    // Generate authentic official stamped PDF and preview PNG
+    let pdfUrl = null;
+    let previewUrl = null;
+    try {
+      const isGrad = (data.template_type || typeSlug || '').toLowerCase().includes('grad') ||
+                     (data.type_name || typeName || '').toLowerCase().includes('appreciation');
+      const genResult = await generateOfficialCertificateDocument({
+        template_type: isGrad ? 'graduating' : 'hiring',
+        recipient_name: data.recipient_name,
+        position: data.position_held || 'Member',
+        class_info: data.department || data.class_info || 'MCA (Int.) - III',
+        tenure: data.notes?.includes('Tenure') ? data.notes.split('|')[0].replace('Tenure:', '').trim() : 'AY 2026-27',
+        date: data.issue_date || '19 September 2026',
+        cert_number: certNumber,
+        verification_url: verificationUrl
+      });
+      if (genResult && genResult.success) {
+        pdfUrl = genResult.pdf_url;
+        previewUrl = genResult.preview_url;
+      }
+    } catch (genErr) {
+      console.warn('Official document generation warning:', genErr.message);
+    }
+
     db.prepare(`
       INSERT INTO certificates (
         id, public_id, cert_number, recipient_id, recipient_name, recipient_display_name,
@@ -76,7 +101,7 @@ exports.createCertificate = async (req, res) => {
         score, category, issue_date, issued_by, approver_name, approver_title, approver_signature,
         secondary_approver_name, secondary_approver_title, secondary_approver_signature,
         template_id, theme, notes, status, privacy_settings, qr_data, barcode_data,
-        verification_url, tamper_hash, created_by, approved_by, approved_at
+        verification_url, tamper_hash, pdf_url, preview_url, created_by, approved_by, approved_at
       ) VALUES (
         ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
@@ -85,7 +110,7 @@ exports.createCertificate = async (req, res) => {
         ?, ?, ?, ?, ?, ?, ?,
         ?, ?, ?,
         ?, ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?
       )
     `).run(
       id, publicId, certNumber, data.recipient_id || null, data.recipient_name, data.recipient_display_name || null,
@@ -96,7 +121,7 @@ exports.createCertificate = async (req, res) => {
       data.secondary_approver_name || null, data.secondary_approver_title || null, data.secondary_approver_signature || null,
       data.template_id || null, data.theme || 'classic_gold', data.notes || null, initialStatus,
       JSON.stringify(data.privacy_settings || { show_member_id: true, show_position: true, show_score: false }),
-      qrData, barcodeObj.svg, verificationUrl, tamperHash, req.user ? req.user.id : 'system',
+      qrData, barcodeObj.svg, verificationUrl, tamperHash, pdfUrl, previewUrl, req.user ? req.user.id : 'system',
       initialStatus === 'issued' ? (req.user ? req.user.id : 'system') : null,
       initialStatus === 'issued' ? new Date().toISOString() : null
     );
@@ -122,6 +147,8 @@ exports.createCertificate = async (req, res) => {
       cert_number: certNumber,
       status: initialStatus,
       verification_url: verificationUrl,
+      pdf_url: pdfUrl,
+      preview_url: previewUrl,
       tamper_hash: tamperHash,
       qr_data: qrData,
       barcode_data: barcodeObj.svg
