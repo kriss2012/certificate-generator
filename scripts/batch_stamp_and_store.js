@@ -86,6 +86,9 @@ async function main() {
       item.class_info
     );
 
+    const relPdf = `/stamped_certificates/Graduating Members 2026/${item.filename}`;
+    const relPng = `/stamped_certificates/Graduating Members 2026/${item.filename.replace('.pdf', '.png')}`;
+
     // Upsert Certificate
     db.prepare(`
       INSERT INTO certificates (
@@ -97,6 +100,7 @@ async function main() {
         secondary_approver_name, secondary_approver_title, secondary_approver_signature,
         template_id, theme, notes, status, privacy_settings,
         qr_data, barcode_data, verification_url, tamper_hash,
+        pdf_url, preview_url,
         version, created_by, approved_by, approved_at, created_at, updated_at
       ) VALUES (
         ?, ?, ?, ?, ?, ?,
@@ -107,6 +111,7 @@ async function main() {
         ?, ?, ?,
         ?, ?, ?, 'issued', ?,
         ?, ?, ?, ?,
+        ?, ?,
         1, 'admin', 'Dr. Manoj N. Behere', '2026-09-19 10:00:00', datetime('now'), datetime('now')
       )
       ON CONFLICT(cert_number) DO UPDATE SET
@@ -126,6 +131,8 @@ async function main() {
         barcode_data = excluded.barcode_data,
         verification_url = excluded.verification_url,
         tamper_hash = excluded.tamper_hash,
+        pdf_url = excluded.pdf_url,
+        preview_url = excluded.preview_url,
         status = 'issued',
         updated_at = datetime('now')
     `).run(
@@ -138,7 +145,8 @@ async function main() {
       'Dr. Vaishali B. Patil', 'Director, R. C. Patel IMRD, Shirpur', 'Dr. Vaishali B. Patil [Official Signature]',
       'tmpl_classic_gold', 'classic_gold', `Tenure: ${item.tenure} | Class: ${item.class_info}`,
       JSON.stringify({ show_member_id: true, show_position: true, show_score: false }),
-      qrDataUrl, badgeResult.svg, verificationUrl, tamperHash
+      qrDataUrl, badgeResult.svg, verificationUrl, tamperHash,
+      relPdf, relPng
     );
 
     stampingJobs.push({
