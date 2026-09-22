@@ -1563,6 +1563,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
+  // Populate Integration Snippets with Deployed Origin
+  try {
+    const origin = window.location.origin;
+    const embedIframeEl = document.getElementById('embedIframeSnippet');
+    if (embedIframeEl) {
+      embedIframeEl.textContent = `<!-- Embed Certificate Verification Widget -->\n<iframe \n  src="${origin}/embed/verify" \n  width="100%" \n  height="650px" \n  frameborder="0" \n  style="border-radius:12px; border:1px solid rgba(255,255,255,0.1); box-shadow:0 10px 30px rgba(0,0,0,0.3);">\n</iframe>`;
+    }
+    const embedDirectEl = document.getElementById('embedDirectSnippet');
+    if (embedDirectEl) {
+      embedDirectEl.textContent = `<a href="${origin}/verify" target="_blank" class="club-verify-btn">\n  Verify Certificate Authenticity\n</a>`;
+    }
+  } catch (e) {}
+
   // Integration subtabs
   ['Iframe', 'Direct', 'Api', 'Webhooks'].forEach(name => {
     const btn = document.getElementById('btnTab' + name);
