@@ -8,7 +8,13 @@ const { logAudit } = require('../middleware/auth');
 const { generateOfficialCertificateDocument } = require('../services/officialTemplateService');
 
 function getBaseUrl(req) {
-  return process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+  if (process.env.BASE_URL) {
+    return process.env.BASE_URL.replace(/\/+$/, '');
+  }
+  if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+    return `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+  }
+  return `${req.protocol}://${req.get('host')}`;
 }
 
 // Create a new certificate

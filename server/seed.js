@@ -169,7 +169,8 @@ async function seed() {
   // Certificate number: CLUB-2024-LEAD-00001
   // Verification URL: /verify/CLUB-2024-LEAD-00001
 
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  const baseUrl = (process.env.BASE_URL ? process.env.BASE_URL.replace(/\/+$/, '') : '') ||
+    (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:3000');
   const sampleCertNumber = 'CLUB-2024-LEAD-00001';
   const samplePublicId = 'sec24_alex_morgan';
   const sampleVerificationUrl = `${baseUrl}/verify/${sampleCertNumber}`;

@@ -45,7 +45,8 @@ async function generateOfficialCertificateDocument({
 
   return new Promise((resolve, reject) => {
     const pythonScript = path.join(__dirname, 'generate_official_cert.py');
-    const py = spawn('python', [pythonScript]);
+    const pythonBin = process.env.PYTHON_PATH || (process.platform === 'win32' ? 'python' : 'python3');
+    const py = spawn(pythonBin, [pythonScript]);
 
     let stdout = '';
     let stderr = '';

@@ -9,6 +9,10 @@ const db = require('./server/config/database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
+
+// Trust reverse proxy (Railway, Heroku, Nginx, Cloudflare)
+app.set('trust proxy', 1);
 
 // Security & Headers
 app.use(helmet({
@@ -70,14 +74,30 @@ try {
 
 // Start Server
 if (require.main === module) {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, HOST, () => {
     console.log(`=======================================================`);
     console.log(`Certificate Generation & Verification System running!`);
-    console.log(`URL: http://localhost:${PORT}`);
-    console.log(`Public Verification: http://localhost:${PORT}/verify/CLUB-2024-LEAD-00001`);
+    console.log(`URL: http://${HOST}:${PORT}`);
+    console.log(`Public Verification: /verify/CLUB-2024-LEAD-00001`);
     console.log(`Official Club URL: ${process.env.OFFICIAL_CLUB_WEBSITE_URL || 'https://rcpimrd.ac.in'}`);
     console.log(`=======================================================`);
   });
+
+  const gracefulShutdown = (signal) => {
+    console.log(`Received ${signal}. Gracefully terminating server...`);
+    server.close(() => {
+      try {
+        db.close();
+        console.log('SQLite database connection cleanly closed.');
+      } catch (err) {
+        console.warn('Error during DB closing:', err.message);
+      }
+      process.exit(0);
+    });
+  };
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 }
 
 module.exports = app;
