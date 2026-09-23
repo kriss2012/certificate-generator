@@ -14,7 +14,7 @@ function getBaseUrl(req) {
   if (process.env.RAILWAY_PUBLIC_DOMAIN) {
     return `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
   }
-  return `${req.protocol}://${req.get('host')}`;
+  return 'https://certificate-generator-production-dfb2.up.railway.app';
 }
 
 // Create a new certificate
