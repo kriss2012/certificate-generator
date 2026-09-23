@@ -3,6 +3,10 @@ const db = require('../config/database');
 // Default category codes
 const CATEGORY_CODES = {
   'winner': 'WIN',
+  'graduating': 'GRAD',
+  'grad': 'GRAD',
+  'hiring': 'HIRE',
+  'hire': 'HIRE',
   'appreciation': 'APP',
   'leadership': 'LEAD',
   'membership': 'MEM',
