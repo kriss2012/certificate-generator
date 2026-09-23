@@ -193,16 +193,18 @@ window.executeVerification = async function(identifier) {
     document.getElementById('dtApprover').textContent = `${data.certificate.approver_name || 'Dr. Vaishali Patil'} (${data.certificate.approver_title || 'President'})`;
     document.getElementById('dtVerifiedAt').textContent = new Date(data.verification_timestamp).toLocaleString();
 
-    // RENDER PROPER DUAL VERIFICATION: QR CODE + CODE 128 BARCODE
-    const verifyUrl = data.certificate.verification_url || `${window.location.origin}/verify/${data.certificate.cert_number}`;
-    const qrImg = document.getElementById('verifyQrImage');
-    if (qrImg) {
-      qrImg.src = data.certificate.qr_data || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(verifyUrl)}`;
+    // Actual live verification URL
+    const liveBase = 'https://certificate-generator-production-dfb2.up.railway.app';
+    const liveVerifyUrl = (data.certificate.verification_url && data.certificate.verification_url.startsWith('https://'))
+      ? data.certificate.verification_url
+      : `${liveBase}/verify/${data.certificate.cert_number}`;
+
+    const dtUrlElem = document.getElementById('dtVerificationUrl');
+    if (dtUrlElem) {
+      dtUrlElem.href = liveVerifyUrl;
+      dtUrlElem.textContent = liveVerifyUrl;
     }
-    const directLink = document.getElementById('verifyDirectLink');
-    if (directLink) {
-      directLink.href = verifyUrl;
-    }
+
     renderCode128Barcode(data.certificate.cert_number);
 
     // Setup direct PDF download if authentic stamped PDF exists
@@ -315,7 +317,8 @@ function renderCode128Barcode(certNumber) {
 }
 
 function setupShareLinks(certNumber, recipient) {
-  const verifyUrl = `${window.location.origin}/verify/${certNumber}`;
+  const liveBase = 'https://certificate-generator-production-dfb2.up.railway.app';
+  const verifyUrl = `${liveBase}/verify/${certNumber}`;
   const shareText = encodeURIComponent(`Verified official club certificate for ${recipient} (Cert #${certNumber}): ${verifyUrl}`);
 
   const wa = document.getElementById('shareWhatsApp');
@@ -1517,9 +1520,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (copyLink) {
     copyLink.onclick = () => {
       if (!state.currentCert) return;
-      const url = `${window.location.origin}/verify/${state.currentCert.cert_number}`;
+      const liveBase = 'https://certificate-generator-production-dfb2.up.railway.app';
+      const url = (state.currentCert.verification_url && state.currentCert.verification_url.startsWith('https://'))
+        ? state.currentCert.verification_url
+        : `${liveBase}/verify/${state.currentCert.cert_number}`;
       navigator.clipboard.writeText(url).then(() => {
-        showToast('Verification link copied to clipboard!', 'success');
+        showToast(`Live verification link copied: ${url}`, 'success');
       });
     };
   }
