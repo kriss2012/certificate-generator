@@ -149,7 +149,7 @@ window.executeVerification = async function(identifier) {
     const sheet = document.querySelector('.certificate-sheet-wrapper');
     if (sheet) sheet.style.display = 'block';
     const bCard = document.getElementById('dtBarcodeCard');
-    if (bCard) bCard.style.display = 'block';
+    if (bCard) bCard.style.display = 'none'; // QR code at bottom removed as requested
 
     state.currentCert = data.certificate;
 
@@ -1005,11 +1005,41 @@ window.loadLibrary = async function() {
     const search = document.getElementById('libSearchInput')?.value || '';
     const status = document.getElementById('libStatusFilter')?.value || '';
     const type_id = document.getElementById('libTypeFilter')?.value || '';
+    const sortVal = document.getElementById('libSortFilter')?.value || 'cert_asc';
+
+    // Determine current sort field and direction
+    let sort_by = state.libSortField || 'cert_number';
+    let sort_order = state.libSortOrder || 'ASC';
+
+    if (state.libSortSource !== 'header' && sortVal) {
+      const parts = sortVal.split('_');
+      if (parts[0] === 'cert') sort_by = 'cert_number';
+      else if (parts[0] === 'name') sort_by = 'recipient_name';
+      else if (parts[0] === 'date') sort_by = 'issue_date';
+      sort_order = parts[1] === 'desc' ? 'DESC' : 'ASC';
+      state.libSortField = sort_by;
+      state.libSortOrder = sort_order;
+    }
+
+    // Sync header sort indicators
+    document.querySelectorAll('#libraryTable th.sortable-th').forEach(th => {
+      const field = th.getAttribute('data-sort');
+      const indicator = th.querySelector('.sort-indicator');
+      if (field === sort_by) {
+        th.classList.add('active-sort');
+        if (indicator) indicator.textContent = sort_order === 'ASC' ? '▲' : '▼';
+      } else {
+        th.classList.remove('active-sort');
+        if (indicator) indicator.textContent = '⇅';
+      }
+    });
 
     const params = new URLSearchParams();
     if (search) params.append('search', search);
     if (status) params.append('status', status);
     if (type_id) params.append('type_id', type_id);
+    params.append('sort_by', sort_by);
+    params.append('sort_order', sort_order);
 
     const res = await fetch(`${API_BASE}/certificates?${params.toString()}`, {
       headers: state.token ? { 'Authorization': `Bearer ${state.token}` } : {}
@@ -1020,14 +1050,33 @@ window.loadLibrary = async function() {
     tbody.innerHTML = '';
 
     if (!data.certificates || data.certificates.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No certificates found matching criteria.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);">No certificates found matching criteria.</td></tr>';
       return;
     }
 
-    data.certificates.forEach(c => {
+    // Secondary client sort guarantee with natural numeric collation
+    data.certificates.sort((a, b) => {
+      const valA = a[sort_by] ?? '';
+      const valB = b[sort_by] ?? '';
+      if (sort_by === 'cert_number') {
+        return sort_order === 'ASC'
+          ? String(valA).localeCompare(String(valB), undefined, { numeric: true, sensitivity: 'base' })
+          : String(valB).localeCompare(String(valA), undefined, { numeric: true, sensitivity: 'base' });
+      }
+      if (sort_by === 'issue_date') {
+        const diff = new Date(valA || 0) - new Date(valB || 0);
+        return sort_order === 'ASC' ? diff : -diff;
+      }
+      return sort_order === 'ASC'
+        ? String(valA).localeCompare(String(valB), undefined, { numeric: true })
+        : String(valB).localeCompare(String(valA), undefined, { numeric: true });
+    });
+
+    data.certificates.forEach((c, idx) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><code style="color:var(--color-acid);">${c.cert_number}</code></td>
+        <td style="text-align:center;font-weight:600;color:var(--text-muted);font-size:0.85rem;">${idx + 1}</td>
+        <td><code style="color:var(--color-acid);font-weight:700;">${c.cert_number}</code></td>
         <td><strong>${c.recipient_name}</strong></td>
         <td>${c.type_name}</td>
         <td>${c.event_name || '-'}</td>
@@ -1043,15 +1092,16 @@ window.loadLibrary = async function() {
       tbody.appendChild(tr);
     });
 
-    // Populate dashboard table
+    // Populate dashboard table with accurate sequential numbers
     const dashTbody = document.getElementById('dashboardRecentCertsTable');
     if (dashTbody) {
       dashTbody.innerHTML = '';
-      data.certificates.slice(0, 5).forEach(c => {
+      data.certificates.slice(0, 5).forEach((c, idx) => {
         const dtr = document.createElement('tr');
         dtr.innerHTML = `
+          <td style="text-align:center;font-weight:600;color:var(--text-muted);font-size:0.85rem;">${idx + 1}</td>
           <td><code>${c.cert_number}</code></td>
-          <td>${c.recipient_name}</td>
+          <td><strong>${c.recipient_name}</strong></td>
           <td>${c.type_name}</td>
           <td><span class="status-pill status-${c.status}">${c.status}</span></td>
           <td>${c.issue_date}</td>
@@ -1597,7 +1647,45 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   const filterLib = document.getElementById('btnFilterLibrary');
-  if (filterLib) filterLib.onclick = window.loadLibrary;
+  if (filterLib) {
+    filterLib.onclick = () => {
+      state.libSortSource = 'select';
+      window.loadLibrary();
+    };
+  }
+
+  const sortLib = document.getElementById('libSortFilter');
+  if (sortLib) {
+    sortLib.onchange = () => {
+      state.libSortSource = 'select';
+      window.loadLibrary();
+    };
+  }
+
+  // Clickable Sortable Column Headers in Library Table
+  document.querySelectorAll('#libraryTable th.sortable-th').forEach(th => {
+    th.addEventListener('click', () => {
+      const field = th.getAttribute('data-sort');
+      if (!field) return;
+      state.libSortSource = 'header';
+      if (state.libSortField === field) {
+        state.libSortOrder = state.libSortOrder === 'ASC' ? 'DESC' : 'ASC';
+      } else {
+        state.libSortField = field;
+        state.libSortOrder = 'ASC';
+      }
+
+      // Sync select dropdown if matching
+      const sel = document.getElementById('libSortFilter');
+      if (sel) {
+        if (field === 'cert_number') sel.value = state.libSortOrder === 'ASC' ? 'cert_asc' : 'cert_desc';
+        else if (field === 'recipient_name') sel.value = state.libSortOrder === 'ASC' ? 'name_asc' : 'name_desc';
+        else if (field === 'issue_date') sel.value = state.libSortOrder === 'ASC' ? 'date_asc' : 'date_desc';
+      }
+
+      window.loadLibrary();
+    });
+  });
 
   const openLogin = document.getElementById('navLoginBtn');
   if (openLogin) openLogin.onclick = window.openLoginModal;
