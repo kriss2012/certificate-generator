@@ -238,49 +238,7 @@
             </div>
           </div>
 
-          <!-- Official Dual Optical Verification Card (QR Code & Linear Barcode) -->
-          <div class="card" id="dtBarcodeCard" style="margin-top: 1.5rem;">
-            <div class="card-header">
-              <h3 class="card-title">
-                <svg width="20" height="20" fill="none" stroke="var(--color-acid)" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5v14M8 5v14M12 5v14M17 5v14M21 5v14"/></svg>
-                Official Optical Verification (Direct QR Code &amp; Code 128 Barcode)
-              </h3>
-              <span class="status-pill status-issued">LIVE VERIFIABLE</span>
-            </div>
-            
-            <div class="optical-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;align-items:stretch;margin-top:0.5rem;">
-              
-              <!-- Direct Smartphone Scan QR Code -->
-              <div style="text-align:center;padding:1.25rem;background:#ffffff;border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,0.12);display:flex;flex-direction:column;justify-content:space-between;">
-                <div>
-                  <div style="font-size:0.8rem;font-weight:700;color:#0f172a;letter-spacing:0.8px;margin-bottom:0.6rem;">SMARTPHONE CAMERA SCAN</div>
-                  <div id="verifyQrContainer" style="display:flex;justify-content:center;align-items:center;padding:0.5rem;">
-                    <img id="verifyQrImage" src="" alt="Verification QR Code" style="max-width:160px;height:auto;display:block;margin:0 auto;border-radius:4px;" />
-                  </div>
-                </div>
-                <div style="margin-top:0.75rem;">
-                  <a href="#" target="_blank" id="verifyDirectLink" class="btn btn-primary btn-sm" style="font-size:0.75rem;padding:0.4rem 0.8rem;display:inline-flex;align-items:center;gap:0.4rem;text-decoration:none;">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    Open Live Verification Page
-                  </a>
-                </div>
-              </div>
-
-              <!-- Optical 1D Barcode & Machine Reader -->
-              <div style="display:flex;flex-direction:column;justify-content:space-between;background:#ffffff;padding:1.25rem;border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,0.12);text-align:center;">
-                <div>
-                  <div style="font-size:0.8rem;font-weight:700;color:#0f172a;letter-spacing:0.8px;margin-bottom:0.6rem;">MACHINE-READABLE BARCODE (CODE 128)</div>
-                  <div class="barcode-box" style="background:#ffffff;padding:0.5rem;margin:0;min-height:90px;display:flex;align-items:center;justify-content:center;">
-                    <svg id="verifyBarcodeSvg" style="max-width:100%;height:auto;display:block;margin:0 auto;"></svg>
-                  </div>
-                </div>
-                <p style="font-family:var(--font-mono);font-size:0.75rem;color:#64748b;margin-top:0.75rem;text-align:center;line-height:1.4;">
-                  Scan with any phone camera or optical barcode scanner to open certificate details.
-                </p>
-              </div>
-
-            </div>
-          </div>
+          <!-- Official Dual Optical Verification Card removed per user request: QR code not needed at the bottom -->
 
         </div>
 
@@ -319,7 +277,7 @@
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+      <div class="dashboard-layout-grid">
         <!-- Recent Certificates Table -->
         <div class="card">
           <div class="card-header">
@@ -330,7 +288,8 @@
             <table class="custom-table">
               <thead>
                 <tr>
-                  <th>Number</th>
+                  <th style="width:40px;text-align:center;">#</th>
+                  <th>Cert Number</th>
                   <th>Recipient</th>
                   <th>Type</th>
                   <th>Status</th>
@@ -339,7 +298,7 @@
                 </tr>
               </thead>
               <tbody id="dashboardRecentCertsTable">
-                <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">Loading certificates...</td></tr>
+                <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Loading certificates...</td></tr>
               </tbody>
             </table>
           </div>
@@ -361,7 +320,7 @@
          VIEW 3: CERTIFICATE CREATOR STUDIO
          ======================================================== -->
     <section id="viewCreator" class="tab-pane">
-      <div style="display:grid;grid-template-columns:420px 1fr;gap:1.5rem;align-items:start;">
+      <div class="creator-layout-grid">
         
         <!-- Left: Form Controls Sidebar -->
         <div class="card" style="max-height:85vh;overflow-y:auto;">
@@ -571,37 +530,46 @@
         </div>
 
         <!-- Filter bar -->
-        <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;">
-          <input type="text" id="libSearchInput" class="form-control" style="max-width:300px;" placeholder="Search recipient, number, event...">
-          <select id="libStatusFilter" class="form-control" style="max-width:180px;">
+        <div class="library-filter-bar">
+          <input type="text" id="libSearchInput" class="form-control" placeholder="Search recipient, number, event...">
+          <select id="libStatusFilter" class="form-control">
             <option value="">All Statuses</option>
             <option value="issued">Issued &amp; Valid</option>
             <option value="pending_approval">Pending Approval</option>
             <option value="revoked">Revoked</option>
             <option value="superseded">Superseded</option>
           </select>
-          <select id="libTypeFilter" class="form-control" style="max-width:200px;">
+          <select id="libTypeFilter" class="form-control">
             <option value="">All Categories</option>
           </select>
-          <button class="btn btn-primary btn-sm" id="btnFilterLibrary">Filter</button>
+          <select id="libSortFilter" class="form-control" title="Sort Certificates">
+            <option value="cert_asc">Sort: Number (00001 → ...)</option>
+            <option value="cert_desc">Sort: Number (Desc)</option>
+            <option value="name_asc">Sort: Recipient (A → Z)</option>
+            <option value="name_desc">Sort: Recipient (Z → A)</option>
+            <option value="date_desc">Sort: Date (Newest first)</option>
+            <option value="date_asc">Sort: Date (Oldest first)</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="btnFilterLibrary">Filter / Sort</button>
         </div>
 
         <!-- Table -->
         <div class="table-responsive">
-          <table class="custom-table">
+          <table class="custom-table" id="libraryTable">
             <thead>
               <tr>
-                <th>Cert Number</th>
-                <th>Recipient</th>
-                <th>Category</th>
+                <th style="width:45px;text-align:center;">#</th>
+                <th class="sortable-th active-sort" data-sort="cert_number" title="Click to sort by Certificate Number">Cert Number <span class="sort-indicator">▲</span></th>
+                <th class="sortable-th" data-sort="recipient_name" title="Click to sort by Recipient Name">Recipient <span class="sort-indicator">⇅</span></th>
+                <th class="sortable-th" data-sort="type_name" title="Click to sort by Category">Category <span class="sort-indicator">⇅</span></th>
                 <th>Event</th>
-                <th>Issue Date</th>
-                <th>Status</th>
+                <th class="sortable-th" data-sort="issue_date" title="Click to sort by Issue Date">Issue Date <span class="sort-indicator">⇅</span></th>
+                <th class="sortable-th" data-sort="status" title="Click to sort by Status">Status <span class="sort-indicator">⇅</span></th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="libraryTableBody">
-              <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Loading library...</td></tr>
+              <tr><td colspan="8" style="text-align:center;color:var(--text-muted);">Loading library...</td></tr>
             </tbody>
           </table>
         </div>
