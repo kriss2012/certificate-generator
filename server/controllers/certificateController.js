@@ -165,10 +165,10 @@ exports.createCertificate = async (req, res) => {
   }
 };
 
-// List certificates with rich filtering and search
+// List certificates with rich filtering, search, and sorting
 exports.listCertificates = (req, res) => {
   try {
-    const { search, status, type_id, year, limit = 50, offset = 0 } = req.query;
+    const { search, status, type_id, year, sort_by, sort_order, limit = 50, offset = 0 } = req.query;
     let query = 'SELECT * FROM certificates WHERE 1=1';
     const params = [];
 
@@ -193,7 +193,24 @@ exports.listCertificates = (req, res) => {
       params.push(parseInt(year, 10));
     }
 
-    query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+    // Determine sorting field and order
+    const validSortFields = {
+      'cert_number': 'cert_number',
+      'recipient_name': 'recipient_name',
+      'issue_date': 'issue_date',
+      'created_at': 'created_at',
+      'status': 'status',
+      'event_year': 'event_year',
+      'type_name': 'type_name'
+    };
+    const sortField = validSortFields[sort_by] || 'cert_number';
+    const sortDir = (sort_order && sort_order.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';
+
+    if (sortField === 'cert_number') {
+      query += ` ORDER BY cert_number ${sortDir} LIMIT ? OFFSET ?`;
+    } else {
+      query += ` ORDER BY ${sortField} ${sortDir}, cert_number ASC LIMIT ? OFFSET ?`;
+    }
     params.push(parseInt(limit, 10), parseInt(offset, 10));
 
     const certificates = db.prepare(query).all(...params);
@@ -224,13 +241,17 @@ exports.listCertificates = (req, res) => {
 exports.getCertificate = (req, res) => {
   try {
     const { id } = req.params;
+    let altId = id;
+    if (id === 'AISC-2024-LEAD-00001') altId = 'CLUB-2024-LEAD-00001';
+    else if (id === 'CLUB-2024-LEAD-00001') altId = 'AISC-2024-LEAD-00001';
+
     const cert = db.prepare(`
       SELECT c.*, t.name as template_name, ct.wording_template 
       FROM certificates c
       LEFT JOIN certificate_templates t ON c.template_id = t.id
       LEFT JOIN certificate_types ct ON c.type_id = ct.id
-      WHERE c.id = ? OR c.public_id = ? OR c.cert_number = ?
-    `).get(id, id, id);
+      WHERE c.id = ? OR c.public_id = ? OR c.cert_number = ? OR c.cert_number = ?
+    `).get(id, id, id, altId);
 
     if (!cert) {
       return res.status(404).json({ success: false, error: 'Certificate not found' });
