@@ -212,7 +212,9 @@ exports.verifyCertificate = (req, res) => {
         approved_at: cert.approved_at,
         qr_data: cert.qr_data,
         barcode_data: cert.barcode_data,
-        verification_url: cert.verification_url,
+        verification_url: (cert.verification_url && !cert.verification_url.includes('localhost'))
+          ? cert.verification_url
+          : `https://certificate-generator-production-dfb2.up.railway.app/verify/${cert.cert_number}`,
         pdf_url: cert.pdf_url || getStampedPdfUrl(cert.cert_number),
         preview_url: cert.preview_url || getStampedPreviewUrl(cert.cert_number) || (cert.pdf_url ? cert.pdf_url.replace('.pdf', '.png') : null)
       }
