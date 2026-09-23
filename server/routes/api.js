@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { authenticate, authorize } = require('../middleware/auth');
+const { authenticate, optionalAuthenticate, authorize } = require('../middleware/auth');
 const authController = require('../controllers/authController');
 const settingsController = require('../controllers/settingsController');
 const certificateController = require('../controllers/certificateController');
@@ -11,10 +11,12 @@ const apiKeyController = require('../controllers/apiKeyController');
 const analyticsController = require('../controllers/analyticsController');
 
 // ==========================================
-// PUBLIC ROUTES (No Auth Required)
+// PUBLIC ROUTES (No Auth Required / Optional)
 // ==========================================
 router.get('/public/club', settingsController.getPublicClubInfo);
 router.get('/verify/:identifier', verificationController.verifyCertificate);
+router.get('/certificates', optionalAuthenticate, certificateController.listCertificates);
+router.get('/certificates/:id', optionalAuthenticate, certificateController.getCertificate);
 router.post('/auth/login', authController.login);
 
 // ==========================================
@@ -39,8 +41,6 @@ router.get('/settings/templates', settingsController.listTemplates);
 router.put('/settings/templates/:id', authorize('superadmin', 'cert_admin'), settingsController.updateTemplate);
 
 // Certificate Management
-router.get('/certificates', certificateController.listCertificates);
-router.get('/certificates/:id', certificateController.getCertificate);
 router.post('/certificates', authorize('superadmin', 'cert_admin', 'approver'), certificateController.createCertificate);
 router.post('/certificates/bulk', authorize('superadmin', 'cert_admin'), certificateController.bulkImport);
 router.post('/certificates/:id/revoke', authorize('superadmin'), certificateController.revokeCertificate);
