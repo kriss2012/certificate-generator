@@ -100,8 +100,24 @@ function logAudit(userId, userEmail, action, entityType, entityId, details, ipAd
   }
 }
 
+function optionalAuthenticate(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const user = db.prepare('SELECT id, email, full_name, role, is_active FROM users WHERE id = ?').get(decoded.id);
+      if (user && user.is_active) {
+        req.user = user;
+      }
+    } catch (err) {}
+  }
+  next();
+}
+
 module.exports = {
   authenticate,
+  optionalAuthenticate,
   authorize,
   logAudit,
   JWT_SECRET
