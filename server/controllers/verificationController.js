@@ -46,6 +46,10 @@ exports.verifyCertificate = (req, res) => {
     const normalizedHyphenId = cleanId.replace(/\s+/g, '-');
     const upperId = normalizedHyphenId.toUpperCase();
 
+    let altId = upperId;
+    if (upperId === 'AISC-2024-LEAD-00001') altId = 'CLUB-2024-LEAD-00001';
+    else if (upperId === 'CLUB-2024-LEAD-00001') altId = 'AISC-2024-LEAD-00001';
+
     // Query certificate by public_id, cert_number, or internal id with flexible matching
     const cert = db.prepare(`
       SELECT c.*, COALESCE(c.type_name, ct.name) as type_name, ct.slug as type_slug
@@ -53,7 +57,8 @@ exports.verifyCertificate = (req, res) => {
       LEFT JOIN certificate_types ct ON c.type_id = ct.id
       WHERE c.public_id = ? OR c.cert_number = ? OR c.id = ?
          OR UPPER(c.cert_number) = ? OR UPPER(c.cert_number) = ?
-    `).get(cleanId, cleanId, cleanId, upperId, cleanId.toUpperCase());
+         OR UPPER(c.cert_number) = ?
+    `).get(cleanId, cleanId, cleanId, upperId, cleanId.toUpperCase(), altId);
 
     // Get club settings for official verification branding
     const clubRows = db.prepare(`
