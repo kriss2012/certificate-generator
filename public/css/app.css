@@ -363,6 +363,68 @@ body {
   margin-bottom: 2rem;
 }
 
+/* Responsive Layout Grids */
+.dashboard-layout-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.creator-layout-grid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.library-filter-bar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.library-filter-bar input {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+.library-filter-bar select {
+  flex: 0 1 auto;
+  min-width: 150px;
+}
+
+/* Sortable Table Headers */
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sortable-th:hover {
+  color: var(--color-acid) !important;
+}
+
+.sortable-th .sort-indicator {
+  display: inline-block;
+  font-size: 0.75rem;
+  opacity: 0.5;
+  margin-left: 4px;
+}
+
+.sortable-th.active-sort {
+  color: var(--color-acid) !important;
+}
+
+.sortable-th.active-sort .sort-indicator {
+  opacity: 1;
+  color: var(--color-acid);
+  font-weight: bold;
+}
+
 .stat-card {
   background: var(--bg-card-glass);
   border: 1px solid var(--border-subtle);
@@ -785,6 +847,11 @@ html, body {
   .navbar { flex-wrap: wrap; }
   .nav-links { order: 3; width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
   .table-responsive { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+  .dashboard-layout-grid,
+  .creator-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -962,7 +1029,7 @@ html, body {
     font-size: 0.78rem !important;
   }
 
-  /* Certificate Showcase Display on Mobile */
+  /* Certificate Showcase Display on Mobile (Fix Android view bug) */
   .certificate-sheet-wrapper {
     padding: 0.35rem !important;
     border-radius: var(--radius-sm) !important;
@@ -977,8 +1044,9 @@ html, body {
     max-width: 100% !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
-    padding: 0 !important;
+    padding: 0.25rem !important;
     display: flex !important;
+    flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
   }
@@ -987,8 +1055,36 @@ html, body {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    display: block !important;
+    object-fit: contain !important;
     margin: 0 auto !important;
+  }
+  #verifyCertPreviewImg[style*="display: none"],
+  #verifyCanvas[style*="display: none"] {
+    display: none !important;
+  }
+  #dtBarcodeCard {
+    display: none !important;
+  }
+
+  /* Responsive Layout Grids on Mobile */
+  .dashboard-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .creator-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .library-filter-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+  .library-filter-bar input,
+  .library-filter-bar select,
+  .library-filter-bar .btn {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   /* Details Form Grids & Tables on Mobile */
